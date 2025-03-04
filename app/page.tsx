@@ -1,101 +1,152 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import { BoardState, PieceType, PieceSize, PieceColor, COLORS } from "./types";
+import Header from "./components/Header";
+import Board from "./components/Board";
+import PiecesPanel from "./components/PiecesPanel";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [boardState, setBoardState] = useState<BoardState>({ pieces: [] });
+  const [showPiecesPanel, setShowPiecesPanel] = useState(false);
+  const [selectedPieceType, setSelectedPieceType] = useState<PieceType>("Plate");
+  const [selectedColor, setSelectedColor] = useState<PieceColor>(COLORS[2]); // Default to red
+  const [selectedSize, setSelectedSize] = useState<PieceSize>([1, 1]); // Default to 1x1
+  const [isPlacingPiece, setIsPlacingPiece] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === 'p') {
+        togglePiecesPanel();
+      } else if (e.key.toLowerCase() === 'c') {
+        clearBoard();
+      } else if (e.key.toLowerCase() === 's') {
+        // Toggle settings (not implemented)
+      } else if (e.key === 'Escape') {
+        // Cancel piece placement
+        setIsPlacingPiece(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  // Clear the board
+  const clearBoard = () => {
+    setBoardState({ pieces: [] });
+  };
+
+  // Toggle the pieces panel
+  const togglePiecesPanel = () => {
+    setShowPiecesPanel(!showPiecesPanel);
+    // Cancel piece placement when opening panel
+    if (!showPiecesPanel) {
+      setIsPlacingPiece(false);
+    }
+  };
+  
+  // Handle piece selection from the panel
+  const handlePieceSelect = (size: PieceSize) => {
+    setSelectedSize(size);
+    setIsPlacingPiece(true);
+    setShowPiecesPanel(false);
+  };
+
+  // Add a piece to the board
+  const addPiece = (x: number, y: number) => {
+    // Check if the piece would go out of bounds
+    const [width, height] = selectedSize;
+    if (x + width > 32 || y + height > 32) {
+      return; // Don't place if it would go out of bounds
+    }
+    
+    // Check for collision with existing pieces
+    const hasCollision = boardState.pieces.some(piece => {
+      const [pieceX, pieceY] = piece.position;
+      const [pieceWidth, pieceHeight] = piece.size;
+      
+      // Check if the rectangles overlap
+      return (
+        x < pieceX + pieceWidth &&
+        x + width > pieceX &&
+        y < pieceY + pieceHeight &&
+        y + height > pieceY
+      );
+    });
+    
+    if (hasCollision) {
+      return; // Don't place if there's a collision
+    }
+    
+    const newPiece = {
+      id: `piece-${Date.now()}`,
+      type: selectedPieceType,
+      size: selectedSize,
+      color: selectedColor,
+      position: [x, y] as [number, number],
+    };
+    
+    setBoardState(prev => ({
+      pieces: [...prev.pieces, newPiece]
+    }));
+    
+    // Reset placement state
+    setIsPlacingPiece(false);
+  };
+  
+  // Handle click on the board
+  const handleBoardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (showPiecesPanel) return; // Don't place pieces when panel is open
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) / 24);
+    const y = Math.floor((e.clientY - rect.top) / 24);
+    
+    // Make sure we're within the board boundaries
+    if (x >= 0 && x < 32 && y >= 0 && y < 32) {
+      addPiece(x, y);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-white">
+      {/* Header */}
+      <Header 
+        onTogglePiecesPanel={togglePiecesPanel}
+        onClearBoard={clearBoard}
+      />
+      
+      {/* Main board area */}
+      <main className="flex-1 p-4 flex items-center justify-center">
+        <Board 
+          boardState={boardState}
+          onBoardClick={handleBoardClick}
+        />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      
+      {/* Pieces panel */}
+      {showPiecesPanel && (
+        <PiecesPanel
+          onClose={togglePiecesPanel}
+          selectedPieceType={selectedPieceType}
+          setSelectedPieceType={setSelectedPieceType}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
+          selectedSize={selectedSize}
+          onPieceSelect={handlePieceSelect}
+        />
+      )}
+      
+      {/* Status indicator */}
+      {/* {isPlacingPiece && (
+        // <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-full text-sm">
+        //   Click on the board to place a {selectedSize[0]}x{selectedSize[1]} piece (ESC to cancel)
+        // </div>
+      )} */}
     </div>
   );
 }

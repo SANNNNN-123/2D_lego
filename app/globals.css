@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --lego-board: #e8e8e8; 
+  --lego-stud: #e0e0e0; 
 }
 
 @theme inline {
@@ -23,4 +25,99 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Board container styling */
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  perspective: 1000px;
+}
+
+.board-container > div {
+  transform: rotateX(2deg);
+  transform-style: preserve-3d;
+}
+
+/* Lego board styling */
+.grid-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--lego-board);
+  background-image: 
+    radial-gradient(circle at 10px 10px, rgba(0, 0, 0, 0.2) 2px, transparent 2px),
+    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px, 20px 20px, 20px 20px;
+  background-position: 0 0, 0 0, 0 0;
+}
+
+/* Lego piece styling */
+.piece-option {
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  border-radius: 2px;
+}
+
+.piece-option:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Stud styling */
+.stud {
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.stud-base {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.05));
+}
+
+/* Button styling */
+button {
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+/* Panel styling */
+.pieces-panel {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  animation: fadeIn 0.2s ease;
+  user-select: none;
+}
+
+/* Panel header styling */
+.pieces-panel > div:first-child {
+  user-select: none;
+}
+
+.pieces-panel > div:first-child:active {
+  cursor: grabbing;
+}
+
+/* Grip icon styling */
+.pieces-panel .grip-icon {
+  cursor: grab;
+}
+
+.pieces-panel .grip-icon:active {
+  cursor: grabbing;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

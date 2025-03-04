@@ -21,7 +21,12 @@ const LegoPiece: React.FC<LegoPieceProps> = ({ piece }) => {
         left: `${x * 24}px`,
         zIndex: 2,
         borderRadius: "2px",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+        backgroundImage: `
+          linear-gradient(to right, rgba(128,128,128,0.2) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(128,128,128,0.2) 1px, transparent 1px)
+        `,
+        backgroundSize: "24px 24px",
       }}
     >
       {/* Render studs on the piece if it's a plate */}

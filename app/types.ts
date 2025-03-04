@@ -1,38 +1,51 @@
 // Define types for our Lego pieces
-export type PieceType = "Plate" | "Tile";
+export type PieceType = 'Plate' | 'Tile';
 export type PieceSize = [number, number]; // [width, height]
-export type PieceColor = string;
+export type Position = [number, number]; // [x, y]
+
+export const COLORS = [
+  '#000000', // Black
+  '#FFFFFF', // White
+  '#CC0000', // Red
+  '#006400', // Dark Green
+  '#0000CC', // Blue
+  '#FFA500', // Orange
+  '#F5F5DC', // Beige
+  '#8B4513', // Brown
+  '#87CEEB', // Light Blue
+  '#90EE90', // Light Green
+  '#808080', // Gray
+  '#696969', // Dark Gray
+  '#FF69B4', // Pink
+  '#FF4500', // Orange Red
+  '#8A2BE2', // Purple
+  '#800000', // Maroon
+  '#F0E68C', // Khaki
+] as const;
+
+export type PieceColor = typeof COLORS[number];
+
+export const PIECE_SIZES: PieceSize[] = [
+  [1, 1],
+  [2, 1],
+  [2, 2],
+  [2, 3],
+  [2, 4],
+  [4, 1],
+  [4, 2],
+  [6, 1],
+  [6, 2],
+  [8, 1],
+];
 
 export interface LegoPiece {
   id: string;
   type: PieceType;
   size: PieceSize;
+  position: Position;
   color: PieceColor;
-  position: [number, number]; // [x, y] on the board
 }
 
 export interface BoardState {
   pieces: LegoPiece[];
-}
-
-// Available piece sizes
-export const PIECE_SIZES: PieceSize[] = [
-  [1, 1], // 1x1
-  [1, 2], // 1x2
-  [1, 3], // 1x3
-  [2, 1], // 2x1
-  [2, 2], // 2x2
-  [2, 3], // 2x3
-];
-
-// Available colors
-export const COLORS = [
-  "#333333", // Dark gray
-  "#FFFFFF", // White
-  "#FF0000", // Red
-  "#FF6600", // Orange
-  "#FFCC00", // Yellow
-  "#00CC00", // Green
-  "#0066FF", // Blue
-  "#9900FF", // Purple
-]; 
+} 

@@ -17,6 +17,29 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const handleClick = (x: number, y: number) => {
     if (selectedColor === null) {
       // Eraser mode - remove piece at clicked position
+      erasePieceAt(x, y);
+    } else {
+      placePieceAt(x, y);
+    }
+  };
+
+  const erasePieceAt = (x: number, y: number) => {
+    // Don't erase if it's the same position as last erased piece during drag
+    if (lastPlacedPosition.current?.x === x && lastPlacedPosition.current?.y === y) {
+      return;
+    }
+
+    const isOccupied = pieces.some(piece => {
+      const [pieceX, pieceY] = piece.position;
+      const [pieceWidth, pieceHeight] = piece.size;
+      return x >= pieceX && 
+             x < pieceX + pieceWidth && 
+             y >= pieceY && 
+             y < pieceY + pieceHeight;
+    });
+
+    if (isOccupied) {
+      // Remove existing pieces at this position
       setPieces(pieces.filter(piece => {
         const [pieceX, pieceY] = piece.position;
         const [pieceWidth, pieceHeight] = piece.size;
@@ -25,8 +48,18 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                 y >= pieceY && 
                 y < pieceY + pieceHeight);
       }));
-    } else {
-      placePieceAt(x, y);
+
+      // Add a new piece with the base color
+      const newPiece: LegoPiece = {
+        id: `piece-${Date.now()}`,
+        type: 'Plate',
+        size: [1, 1],
+        position: [x, y],
+        color: '#808080', // Light grey from our color palette
+      };
+      
+      setPieces(prevPieces => [...prevPieces, newPiece]);
+      lastPlacedPosition.current = { x, y };
     }
   };
 
@@ -72,8 +105,14 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   };
 
   const handleMouseMove = (x: number, y: number) => {
-    if (isDragging && selectedColor !== null) {
-      placePieceAt(x, y);
+    if (isDragging) {
+      if (selectedColor === null) {
+        // In eraser mode, erase any piece we touch
+        erasePieceAt(x, y);
+      } else {
+        // In color mode, place pieces in empty spots
+        placePieceAt(x, y);
+      }
     }
   };
 
@@ -100,6 +139,15 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
         {Array.from({ length: width * height }).map((_, i) => {
           const y = Math.floor(i / width);
           const x = i % width;
+          const isOccupied = pieces.some(piece => {
+            const [pieceX, pieceY] = piece.position;
+            const [pieceWidth, pieceHeight] = piece.size;
+            return x >= pieceX && 
+                   x < pieceX + pieceWidth && 
+                   y >= pieceY && 
+                   y < pieceY + pieceHeight;
+          });
+
           return (
             <div
               key={`cell-${x}-${y}`}
@@ -109,13 +157,13 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                 left: `${x * 24}px`,
                 width: '24px',
                 height: '24px',
-                cursor: selectedColor ? 'pointer' : 'not-allowed',
+                cursor: selectedColor === null ? 'pointer' : (isOccupied ? 'not-allowed' : 'pointer'),
                 backgroundColor: 'transparent',
                 transition: 'background-color 0.1s ease',
                 zIndex: 0,
               }}
               onMouseEnter={(e) => {
-                if (selectedColor) {
+                if (selectedColor === null || !isOccupied) {
                   e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
                   handleMouseMove(x, y);
                 }
@@ -125,8 +173,10 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
               }}
               onMouseDown={(e) => {
                 e.preventDefault();
-                handleMouseDown();
-                handleClick(x, y);
+                if (selectedColor === null || !isOccupied) {
+                  handleMouseDown();
+                  handleClick(x, y);
+                }
               }}
             />
           );
@@ -188,8 +238,8 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
               x={x}
               y={y}
               isOnPiece={false}
-              isClickable={!isOccupied && selectedColor !== null}
-              onClick={() => !isOccupied && handleClick(x, y)}
+              isClickable={selectedColor === null || !isOccupied}
+              onClick={() => handleClick(x, y)}
               onMouseEnter={() => handleMouseMove(x, y)}
             />
           );

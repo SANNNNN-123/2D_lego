@@ -1,7 +1,6 @@
 import React from 'react';
 import { PieceColor } from '../types';
 import LegoStud from './LegoStud';
-import { Eraser } from 'lucide-react';
 
 interface ColorPaletteProps {
   selectedColor: string | null;
@@ -58,9 +57,9 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
         {colors.map(color => renderLegoPiece(color))}
       </div>
       
-      <div className="flex items-center gap-2 mt-1">
+      <div className="flex items-center gap-2 mt-2">
         <div 
-          className={`w-6 h-6 relative cursor-pointer overflow-hidden ${selectedColor === null ? 'ring-2 ring-black' : ''}`}
+          className={`w-6 h-6 relative cursor-pointer overflow-hidden ${selectedColor !== null && selectedColor.startsWith('#') ? 'ring-2 ring-black' : ''}`}
         >
           <input 
             type="color" 
@@ -70,12 +69,12 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
           />
         </div>
         <button
-          className={`w-6 h-6 bg-white border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50
-            ${selectedColor === null ? 'ring-2 ring-black' : ''}`}
+          className={`px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 transition-colors
+            ${selectedColor === null ? 'ring-2 ring-black bg-gray-100' : ''}`}
           onClick={() => onColorSelect(null)}
           title="Eraser"
         >
-          <Eraser size={16} strokeWidth={2.5} />
+          Eraser
         </button>
       </div>
     </div>

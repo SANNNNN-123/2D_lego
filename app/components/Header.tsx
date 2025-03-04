@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface HeaderProps {
   onTogglePiecesPanel: () => void;
@@ -9,7 +10,16 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onTogglePiecesPanel, onClearBoard, onHomeClick }) => {
   return (
     <header className="p-4 border-b flex justify-between items-center">
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 mr-4">
+          <Image
+            src="/logo.png"
+            alt="2D LEGO Logo"
+            width={32}
+            height={32}
+          />
+          <span className="font-press-start font-medium">2D LEGO</span>
+        </div>
         <button 
           className="px-2 py-1 hover:bg-gray-100 font-medium"
           onClick={onTogglePiecesPanel}

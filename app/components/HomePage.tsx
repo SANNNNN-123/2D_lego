@@ -1,15 +1,18 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import Image from "next/image"
 
 export function Header() {
   return (
     <header className="flex items-center justify-between py-6">
       <div className="flex items-center">
-        <div className="flex space-x-1">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-4 h-4 bg-red-500 rounded-sm" style={{ marginTop: i % 2 === 0 ? "8px" : "0" }} />
-          ))}
-        </div>
+        <Image
+          src="/logo.png"
+          alt="2D LEGO Logo"
+          width={40}
+          height={40}
+          className="mr-2"
+        />
         <h1 className="text-xl font-bold ml-3 font-press-start">2D LEGO</h1>
       </div>
       <nav className="hidden md:flex space-x-8">

@@ -3,9 +3,10 @@ import React from 'react';
 interface HeaderProps {
   onTogglePiecesPanel: () => void;
   onClearBoard: () => void;
+  onHomeClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onTogglePiecesPanel, onClearBoard }) => {
+const Header: React.FC<HeaderProps> = ({ onTogglePiecesPanel, onClearBoard, onHomeClick }) => {
   return (
     <header className="p-4 border-b flex justify-between items-center">
       <div className="flex gap-4">
@@ -25,7 +26,10 @@ const Header: React.FC<HeaderProps> = ({ onTogglePiecesPanel, onClearBoard }) =>
           IMPORTS [I]
         </button>
       </div>
-      <button className="px-4 py-1 bg-gray-100 hover:bg-gray-200 font-medium rounded">
+      <button 
+        className="px-4 py-1 bg-gray-100 hover:bg-gray-200 font-medium rounded"
+        onClick={onHomeClick}
+      >
         HOME
       </button>
     </header>

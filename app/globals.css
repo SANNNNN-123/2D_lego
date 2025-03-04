@@ -1,17 +1,30 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("/fonts/PressStart2P.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
   --lego-board: #e8e8e8; 
   --lego-stud: #e0e0e0; 
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-pixel: "Press Start 2P";
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,7 +37,35 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Press Start 2P", cursive;
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+* {
+  font-family: "Press Start 2P", cursive;
+}
+
+/* Adjust text sizes for better readability with pixel font */
+h1 { 
+  font-size: 2rem; 
+  line-height: 1.4; 
+}
+h2 { 
+  font-size: 1.5rem; 
+  line-height: 1.4; 
+}
+h3 { 
+  font-size: 1.25rem; 
+  line-height: 1.4; 
+}
+p { 
+  font-size: 0.85rem; 
+  line-height: 1.6; 
+}
+button { 
+  font-size: 0.75rem;
 }
 
 /* Board container styling */
@@ -83,6 +124,7 @@ body {
 button {
   transition: all 0.1s ease;
   user-select: none;
+  padding: 0.5rem 1rem;
 }
 
 /* Panel styling */
@@ -96,6 +138,8 @@ button {
 /* Panel header styling */
 .pieces-panel > div:first-child {
   user-select: none;
+  font-size: 0.75rem;
+  letter-spacing: -0.01em;
 }
 
 .pieces-panel > div:first-child:active {

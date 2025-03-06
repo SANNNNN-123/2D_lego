@@ -165,3 +165,8 @@ button {
     transform: scale(1);
   }
 }
+
+/* Add this at the top of the file */
+.nes-btn, .nes-container {
+  font-family: var(--font-press-start-2p);
+}

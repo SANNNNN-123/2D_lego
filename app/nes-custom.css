@@ -1,0 +1,154 @@
+/* NES.css Custom Styles */
+
+/* Add a class for the NES.css styling */
+.nes-style {
+  font-family: var(--font-press-start-2p) !important;
+}
+
+/* Double line separator in NES style */
+.nes-separator {
+  position: relative;
+  height: 8px;
+  margin: 8px 0;
+  background: transparent;
+}
+
+.nes-separator::before,
+.nes-separator::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #000;
+}
+
+.nes-separator::before {
+  top: 0;
+}
+
+.nes-separator::after {
+  bottom: 0;
+}
+
+/* Color palette styles */
+.nes-container.with-title .title {
+  background-color: white;
+  padding: 0 8px;
+  margin: -2rem 0 1rem;
+  font-size: 10px !important;
+}
+
+.nes-container.is-rounded {
+  border-radius: 0 !important;
+  border-image-repeat: stretch !important;
+}
+
+/* Color swatch styles */
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.color-swatch.selected {
+  border: 3px solid black;
+}
+
+.color-swatch-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.3), inset 0 -2px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Dialog styles */
+.nes-container.is-rounded.with-title {
+  padding: 1.5rem 1rem 1rem !important;
+}
+
+.nes-container.is-rounded.with-title .title {
+  margin: -2.7rem 0 1rem;
+}
+
+/* Dialog overlay */
+.nes-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+}
+
+/* Ensure buttons have the proper pixelated look */
+.nes-btn {
+  border-image-repeat: stretch !important;
+  font-family: var(--font-press-start-2p) !important;
+  font-size: 10px !important;
+  padding: 0.5rem !important;
+  margin: 0.25rem !important;
+  line-height: 1 !important;
+  border-style: solid !important;
+  border-width: 4px !important;
+}
+
+/* Eraser button */
+.nes-btn.is-error {
+  background-color: #ff0000 !important;
+  color: white !important;
+}
+
+/* Ensure containers have the proper pixelated look */
+.nes-container {
+  border-image-repeat: stretch !important;
+  font-family: var(--font-press-start-2p) !important;
+  padding: 1rem !important;
+  margin: 0.5rem !important;
+  border-style: solid !important;
+  border-width: 4px !important;
+}
+
+/* Ensure inputs have the proper pixelated look */
+.nes-input {
+  border-image-repeat: stretch !important;
+  font-family: var(--font-press-start-2p) !important;
+  font-size: 8px !important;
+  padding: 0.5rem !important;
+  line-height: 1 !important;
+  border-style: solid !important;
+  border-width: 4px !important;
+}
+
+/* Fix for button borders */
+.nes-btn::after {
+  box-shadow: inset -4px -4px #adafbc !important;
+}
+
+.nes-btn.is-primary::after {
+  box-shadow: inset -4px -4px #006bb3 !important;
+}
+
+.nes-btn.is-error::after {
+  box-shadow: inset -4px -4px #ce372b !important;
+}
+
+/* Ensure text is properly styled */
+.nes-text {
+  font-family: var(--font-press-start-2p) !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+} 

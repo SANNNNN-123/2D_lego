@@ -1,6 +1,5 @@
 import React from 'react';
 import { PieceColor } from '../types';
-import LegoStud from './LegoStud';
 
 interface ColorPaletteProps {
   selectedColor: string | null;
@@ -30,49 +29,62 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
   ];
 
   const renderLegoPiece = (color: string) => {
+    const isSelected = selectedColor === color;
+    
     return (
       <div 
         key={color}
-        className={`w-6 h-6 relative cursor-pointer ${selectedColor === color ? 'ring-2 ring-black' : ''}`}
+        className={`color-swatch ${isSelected ? 'selected' : ''}`}
         onClick={() => onColorSelect(color)}
-        style={{
-          backgroundColor: color,
-          borderRadius: '2px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          backgroundImage: `
-            linear-gradient(to right, rgba(128,128,128,0.2) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(128,128,128,0.2) 1px, transparent 1px)
-          `,
-          backgroundSize: '24px 24px',
-        }}
+        style={{ backgroundColor: color }}
       >
-        <LegoStud x={0} y={0} color={color} isOnPiece={true} />
+        <div className="color-swatch-dot" style={{ backgroundColor: color }} />
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-6 gap-2">
+    <div className="nes-container with-title" style={{ padding: '1rem' }}>
+      <p className="title" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>Colors</p>
+      <div className="grid grid-cols-5 gap-2">
         {colors.map(color => renderLegoPiece(color))}
       </div>
       
-      <div className="flex items-center gap-2 mt-2">
+      <div className="flex items-center gap-2 mt-4">
         <div 
-          className={`w-6 h-6 relative cursor-pointer overflow-hidden ${selectedColor !== null && selectedColor.startsWith('#') ? 'ring-2 ring-black' : ''}`}
+          className="relative cursor-pointer"
+          style={{
+            width: '32px',
+            height: '32px',
+            border: selectedColor !== null && selectedColor.startsWith('#') && !colors.includes(selectedColor) ? '3px solid black' : '1px solid #ccc',
+            overflow: 'hidden',
+          }}
         >
           <input 
             type="color" 
             value={selectedColor || '#FF0000'} 
             onChange={(e) => onColorSelect(e.target.value)}
-            className="w-8 h-8 absolute -left-1 -top-1 cursor-pointer"
+            className="absolute"
+            style={{
+              width: '40px',
+              height: '40px',
+              top: '-5px',
+              left: '-5px',
+              cursor: 'pointer',
+            }}
           />
         </div>
         <button
-          className={`px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 transition-colors
-            ${selectedColor === null ? 'ring-2 ring-black bg-gray-100' : ''}`}
+          className={`nes-btn ${selectedColor === null ? 'is-error' : ''}`}
           onClick={() => onColorSelect(null)}
           title="Eraser"
+          style={{ 
+            fontFamily: 'var(--font-press-start-2p)', 
+            fontSize: '8px',
+            padding: '4px 8px',
+            height: 'auto',
+            margin: '0',
+          }}
         >
           Eraser
         </button>

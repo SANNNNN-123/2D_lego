@@ -15,7 +15,7 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
   };
 
   return (
-    <div className="nes-container" style={{ width: '250px' }}>
+    <div className="nes-container" style={{ width: '360px' }}>
       <h3 className="nes-text mb-2">Enter Image Prompt</h3>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
@@ -25,7 +25,7 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
               className="nes-input"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Enter your p"
+              placeholder="Eg: cat, car, etc."
             />
             <button 
               type="submit" 
@@ -34,7 +34,7 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
               Submit
             </button>
           </div>
-          <div className="mt-2 nes-container" style={{ height: '200px', width: '100%', padding: '0 !important' }}>
+          <div className="mt-2 nes-container" style={{ height: '280px', width: '100%', padding: '0 !important' }}>
             {/* Image will be displayed here */}
           </div>
         </div>

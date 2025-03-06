@@ -4,88 +4,70 @@ import Image from "next/image"
 
 export function Header() {
   return (
-    <header className="flex items-center justify-between py-6">
-      <div className="flex items-center">
-        <Image
-          src="/logo.png"
-          alt="2D LEGO Logo"
-          width={40}
-          height={40}
-          className="mr-2"
-        />
-        <h1 className="text-xl font-bold ml-3 font-press-start">2D LEGO</h1>
+    <div className="w-full mb-8">
+      <div className="flex justify-between items-center px-4 py-4">
+        <div className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="2D LEGO Logo"
+            width={40}
+            height={40}
+            className="mr-3"
+          />
+          <h1 className="text-xl font-bold ml-3" style={{ fontFamily: 'var(--font-press-start-2p)', margin: 0, letterSpacing: '-0.05em' }}>
+            2D<span style={{ marginLeft: '0.3em' }}>LEGO</span>
+          </h1>
+        </div>
+        <div>
+          <Link href="#gallery" className="nes-btn">
+            Gallery
+          </Link>
+        </div>
       </div>
-      <nav className="hidden md:flex space-x-8">
-        <a href="#gallery" className="text-gray-600 hover:text-gray-900 font-press-start">
-          Gallery
-        </a>
-      </nav>
-    </header>
+      {/* Double line separator */}
+      <div className="nes-separator"></div>
+    </div>
   )
 }
 
 export function HeroSection() {
   return (
-    <section className="py-20 text-center">
-      <h2 className="text-5xl font-bold mb-6 font-press-start">Build Anything You Imagine</h2>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 font-press-start">
+    <section className="py-10 text-center">
+      <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: 'var(--font-press-start-2p)', marginBottom: '1.5rem', marginTop: 0 }}>Build Anything You Imagine</h2>
+      <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-10" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '14px' }}>
         Create, design, and share your LEGO masterpieces with our intuitive 2D LEGO builder. No physical limitations,
         just pure creativity.
       </p>
       <Link
         href="/builder"
-        className="inline-flex items-center px-6 py-3 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 transition-colors font-press-start"
+        className="nes-btn is-primary inline-flex items-center"
       >
-        Start Building <ArrowRight className="ml-2 h-5 w-5" />
+        Start Building
       </Link>
-
-      <div className="mt-16 relative">
-        <div className="grid grid-cols-5 gap-4 max-w-4xl mx-auto">
-          {Array.from({ length: 15 }).map((_, i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-sm"
-              style={{
-                backgroundColor: ["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#007AFF", "#AF52DE"][i % 6],
-                width: "100%",
-                height: 0,
-                paddingBottom: "100%",
-                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 3px, transparent 3px)",
-                backgroundSize: "20px 20px",
-                backgroundPosition: "10px 10px",
-              }}
-            />
-          ))}
-        </div>
-      </div>
     </section>
   )
 }
 
 export function GallerySection() {
-  const galleryItems = [
-    { name: "Space Rocket", color: "#FF3B30" },
-    { name: "Pixel Art Heart", color: "#FF9500" },
-    { name: "City Skyline", color: "#34C759" },
-    { name: "Robot Friend", color: "#007AFF" },
-    { name: "Flower Garden", color: "#FFCC00" },
-    { name: "Abstract Pattern", color: "#AF52DE" },
-  ]
-
   return (
-    <section id="gallery" className="py-20 bg-gray-50 -mx-4 px-4">
-      <h2 className="text-2xl font-bold text-center mb-16">Community Creations</h2>
+    <section className="py-16" id="gallery">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: 'var(--font-press-start-2p)', marginBottom: '1rem', marginTop: 0 }}>Gallery</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px' }}>
+          Check out these amazing creations made from the community
+        </p>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {galleryItems.map((item, i) => (
-          <GalleryItem key={i} name={item.name} color={item.color} />
-        ))}
+        <GalleryItem name="Castle" color="#CC0000" />
+        <GalleryItem name="Spaceship" color="#0000CC" />
+        <GalleryItem name="Robot" color="#006400" />
       </div>
       <div className="text-center mt-10">
         <Link
           href="/builder"
-          className="inline-flex items-center px-6 py-3 bg-gray-800 text-white font-medium rounded-md hover:bg-gray-900 transition-colors font-press-start"
+          className="nes-btn is-primary"
         >
-          Create Your Own <ArrowRight className="ml-2 h-5 w-5" />
+          Create Your Own
         </Link>
       </div>
     </section>
@@ -94,9 +76,10 @@ export function GallerySection() {
 
 function GalleryItem({ name, color }: { name: string; color: string }) {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md">
+    <div className="nes-container with-title">
+      <p className="title" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px' }}>{name}</p>
       <div
-        className="h-48 bg-gray-200"
+        className="h-48"
         style={{
           backgroundImage: `repeating-linear-gradient(45deg, ${color}22, ${color}22 10px, ${color}44 10px, ${color}44 20px)`,
           backgroundSize: "100px 100px",
@@ -114,26 +97,23 @@ function GalleryItem({ name, color }: { name: string; color: string }) {
           />
         </div>
       </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-lg font-press-start">{name}</h3>
-        <p className="text-gray-600 text-sm mt-1 font-press-start">Created by LEGO Builder</p>
-      </div>
+      <p className="text-gray-600 text-sm mt-2" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>Created by LEGO Builder</p>
     </div>
   )
 }
 
-
 export function Footer() {
   return (
-    <footer className="py-10 border-t">
-      <div className="flex flex-col md:flex-row justify-between items-center">
+    <footer className="py-10 mt-8">
+      <div className="nes-separator mb-6"></div>
+      <div className="flex flex-col md:flex-row justify-between items-center px-4">
         <div className="flex items-center mb-4 md:mb-0">
-          <p className="text-sm text-gray-600 ml-3 font-press-start">© 2025 LEGO Builder.</p>
+          <p className="text-sm" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>© 2025 LEGO Builder.</p>
         </div>
         <div className="flex space-x-6">
-          <a href="#" className="text-gray-600 hover:text-gray-900 font-press-start">
+          <Link href="#" className="nes-btn">
             Contact
-          </a>
+          </Link>
         </div>
       </div>
     </footer>
@@ -143,7 +123,7 @@ export function Footer() {
 // Main HomePage component that combines all sections
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white px-4">
+    <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto">
         <Header />
         <HeroSection />

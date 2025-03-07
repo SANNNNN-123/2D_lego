@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 import Image from "next/image"
 
 export function Header() {
@@ -32,18 +31,41 @@ export function Header() {
 
 export function HeroSection() {
   return (
-    <section className="py-10 text-center">
-      <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: 'var(--font-press-start-2p)', marginBottom: '1.5rem', marginTop: 0 }}>Build Anything You Imagine</h2>
-      <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-10" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '14px' }}>
-        Create, design, and share your LEGO masterpieces with our intuitive 2D LEGO builder. No physical limitations,
-        just pure creativity.
-      </p>
-      <Link
-        href="/builder"
-        className="nes-btn is-primary inline-flex items-center"
-      >
-        Start Building
-      </Link>
+    <section className="py-16 text-center">
+      <div className="max-w-5xl mx-auto px-4">
+        <h2 
+          className="text-4xl md:text-5xl font-bold mb-8 animate-fadeIn" 
+          style={{ 
+            fontFamily: 'var(--font-press-start-2p)', 
+            marginBottom: '2rem', 
+            marginTop: 0,
+            textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+          }}
+        >
+          Build Anything You Imagine
+        </h2>
+        <p 
+          className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12" 
+          style={{ 
+            fontFamily: 'var(--font-press-start-2p)', 
+            fontSize: '16px',
+            lineHeight: '1.8'
+          }}
+        >
+          Create, design, and share your LEGO masterpieces with our intuitive 2D LEGO builder. No physical limitations,
+          just pure creativity.
+        </p>
+        <Link
+          href="/builder"
+          className="nes-btn is-primary inline-flex items-center justify-center text-lg px-8 py-4 transition-transform hover:scale-105"
+          style={{
+            fontSize: '18px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          Start Building
+        </Link>
+      </div>
     </section>
   )
 }
@@ -67,7 +89,7 @@ export function GallerySection() {
           href="/builder"
           className="nes-btn is-primary"
         >
-          Create Your Own
+          View All
         </Link>
       </div>
     </section>

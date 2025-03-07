@@ -18,18 +18,18 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const lastPlacedPosition = useRef<{ x: number; y: number } | null>(null);
 
   // Add keyboard event listener for 'C' key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'c' || e.key === 'C') {
-        setShowClearConfirmation(true);
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (e.key === 'c' || e.key === 'C') {
+  //       setShowClearConfirmation(true);
+  //     }
+  //   };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  //   window.addEventListener('keydown', handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, []);
 
   const handleClearBoard = () => {
     setPieces([]);
@@ -174,7 +174,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
       <div className="flex gap-8 items-start justify-center mt-4">
         {/* Image Prompt Component */}
         <ImagePrompt onSubmit={(prompt) => {
-          console.log("Image prompt submitted:", prompt);
+          // console.log("Image prompt submitted:", prompt);
           // Functionality will be implemented later
         }} />
 

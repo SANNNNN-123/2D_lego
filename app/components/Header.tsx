@@ -15,16 +15,16 @@ const Header: React.FC<HeaderProps> = ({ onTogglePiecesPanel, onClearBoard, onHo
           className="px-2 py-1 hover:bg-gray-100 font-medium"
           onClick={onTogglePiecesPanel}
         >
-          PIECES [P]
+          PIECES
         </button>
         <button 
           className="px-2 py-1 hover:bg-gray-100 font-medium"
           onClick={onClearBoard}
         >
-          CLEAR [C]
+          CLEAR
         </button>
         <button className="px-2 py-1 hover:bg-gray-100 font-medium">
-          SUBMIT [S]
+          SUBMIT
         </button>
       </div>
       <button 

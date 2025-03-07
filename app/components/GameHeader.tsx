@@ -12,13 +12,13 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit }) => {
       <div className="flex justify-between items-center mb-4 px-4">
         <div className="flex gap-2">
           <button className="nes-btn" onClick={() => console.log('Pieces clicked')}>
-            PIECES [P]
+            PIECES
           </button>
           <button className="nes-btn" onClick={onClear}>
-            CLEAR [C]
+            CLEAR
           </button>
           <button className="nes-btn" onClick={onSubmit}>
-            SUBMIT [S]
+            SUBMIT
           </button>
         </div>
         <div>

@@ -7,8 +7,10 @@ export async function POST(request: Request) {
   try {
     const { prompt } = await request.json();
     
-    const formattedPrompt = `A 2D pixel art of a ${prompt}, created using a grid of square pixels.`;
-    const negativePrompt = "shadow, multiple objects";
+    const formattedPrompt = `A 2D pixel art of a ${prompt}, created using a grid of square pixels, with maximum three basic colors flat colors with no gradients and white background`;
+    //const negativePrompt = "shadow, multiple objects";
+    //const formattedPrompt = `A simple 2D pixel art of a ${prompt} on a grid background, using minimal colors (maximum 4 distinct colors), clear pixel boundaries, flat colors with no gradients, in an iconic simplified style similar to early video game sprites and white background`;
+    const negativePrompt = "3D ,more than four colors,shadows, shading, gradient, realistic, 3D, detailed, complex, multiple objects, background elements, texture";
 
     const response = await together.images.create({
       prompt: formattedPrompt,

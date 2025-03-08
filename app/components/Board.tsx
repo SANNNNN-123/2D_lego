@@ -4,6 +4,7 @@ import LegoStud from './LegoStud';
 import ColorPalette from './ColorPalette';
 import ImagePrompt from './ImagePrompt';
 import GameHeader from './GameHeader';
+import html2canvas from 'html2canvas';
 
 interface BoardProps {
   width: number;
@@ -16,6 +17,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
   const lastPlacedPosition = useRef<{ x: number; y: number } | null>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   // Add keyboard event listener for 'C' key
   // useEffect(() => {
@@ -138,11 +140,79 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
     }
   };
 
+  const captureDesignData = async () => {
+    // If there are no pieces, return early with a message
+    if (pieces.length === 0) {
+      return {
+        pixelData: [[]],
+        colorPalette: [],
+        imageDataUrl: null
+      };
+    }
+
+    // Find the boundaries of the occupied area
+    let minX = width;
+    let minY = height;
+    let maxX = 0;
+    let maxY = 0;
+
+    // Determine the boundaries of all pieces
+    pieces.forEach(piece => {
+      const [pieceX, pieceY] = piece.position;
+      const [pieceWidth, pieceHeight] = piece.size;
+      
+      minX = Math.min(minX, pieceX);
+      minY = Math.min(minY, pieceY);
+      maxX = Math.max(maxX, pieceX + pieceWidth - 1);
+      maxY = Math.max(maxY, pieceY + pieceHeight - 1);
+    });
+
+    // Add a small padding around the occupied area (2 cells)
+    const padding = 2;
+    minX = Math.max(0, minX - padding);
+    minY = Math.max(0, minY - padding);
+    maxX = Math.min(width - 1, maxX + padding);
+    maxY = Math.min(height - 1, maxY + padding);
+
+    // Calculate dimensions of the occupied area
+    const occupiedWidth = maxX - minX + 1;
+    const occupiedHeight = maxY - minY + 1;
+
+    // Create a matrix representation of just the occupied area
+    const boardMatrix = Array(occupiedHeight).fill(0).map(() => Array(occupiedWidth).fill(null));
+    
+    // Fill the matrix with piece data
+    pieces.forEach(piece => {
+      const [pieceX, pieceY] = piece.position;
+      const [pieceWidth, pieceHeight] = piece.size;
+      
+      // Fill the matrix cells occupied by this piece, adjusting for the offset
+      for (let y = pieceY; y < pieceY + pieceHeight; y++) {
+        for (let x = pieceX; x < pieceX + pieceWidth; x++) {
+          if (y >= minY && y <= maxY && x >= minX && x <= maxX) {
+            boardMatrix[y - minY][x - minX] = piece.color;
+          }
+        }
+      }
+    });
+    
+    // Get all unique colors used in the design
+    const colorPalette = [...new Set(pieces.map(piece => piece.color))];
+    
+    return {
+      pixelData: boardMatrix,
+      colorPalette,
+      imageDataUrl: null,
+      bounds: { minX, minY, maxX, maxY, width: occupiedWidth, height: occupiedHeight }
+    };
+  };
+
   return (
     <div className="flex flex-col items-center w-full">
       <GameHeader 
         onClear={() => setShowClearConfirmation(true)}
-        onSubmit={() => console.log('Submit clicked')}
+        onSubmit={() => {}}
+        captureDesignData={captureDesignData}
       />
       
       {/* Confirmation Dialog */}
@@ -175,11 +245,12 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
         {/* Image Prompt Component */}
         <ImagePrompt onSubmit={(prompt) => {
           // console.log("Image prompt submitted:", prompt);
-          // Functionality will be implemented later
         }} />
 
         <div
+          ref={boardRef}
           className="board relative bg-white rounded-lg shadow-xl"
+          id="board-container"
           style={{
             width: `${width * 24}px`,
             height: `${height * 24}px`,

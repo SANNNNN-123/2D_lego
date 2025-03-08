@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LegoDesignPreview from './LegoDesignPreview';
 
 interface DesignSubmitDialogProps {
@@ -20,12 +20,72 @@ const DesignSubmitDialog: React.FC<DesignSubmitDialogProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [creator, setCreator] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Reset states when dialog is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setShowSuccess(false);
+      setName('');
+      setCreator('');
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
   
   // Calculate the dimensions of the preview container
   const previewWidth = designData && designData.pixelData[0] ? designData.pixelData[0].length * 24 : 0;
   const previewHeight = designData && designData.pixelData ? designData.pixelData.length * 24 : 0;
+  
+  const handleSubmit = () => {
+    onSubmit(name, creator);
+    setShowSuccess(true);
+    
+    // Close the dialog after showing success message for 2 seconds
+    setTimeout(() => {
+      setShowSuccess(false);
+      onClose();
+    }, 2000);
+  };
+  
+  // Success message dialog
+  if (showSuccess) {
+    return (
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        style={{ 
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}
+      >
+        <div 
+          className="nes-container is-rounded bg-white p-4 max-w-md w-full"
+          style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            width: '100%',
+            textAlign: 'center'
+          }}
+        >
+          <div className="mb-4">
+            <i className="nes-icon is-large star"></i>
+          </div>
+          <h3 className="title mb-4">Thank you for the submission!</h3>
+          <p className="mb-4">Your awesome Lego design has been saved.</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div 
@@ -110,7 +170,7 @@ const DesignSubmitDialog: React.FC<DesignSubmitDialogProps> = ({
           </button>
           <button 
             className="nes-btn is-primary"
-            onClick={() => onSubmit(name, creator)}
+            onClick={handleSubmit}
             disabled={!name || !creator}
           >
             Submit

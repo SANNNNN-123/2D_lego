@@ -31,24 +31,38 @@ export function Header() {
 
 export function HeroSection() {
   return (
-    <section className="py-16 text-center">
+    <section className="py-8 text-center">
       <div className="max-w-5xl mx-auto px-4">
-        <h2 
-          className="text-4xl md:text-5xl font-bold mb-8 animate-fadeIn" 
+        <div className="counter-notification">
+          <span className="nes-icon coin is-small"></span>
+          <span>11 pixel art LEGO created!</span>
+        </div>
+        <div className="flex justify-center space-x-4 mb-8">
+          <i className="nes-ash"></i>
+          <i className="nes-pokeball"></i>
+          <i className="nes-bulbasaur"></i>
+          <i className="nes-charmander"></i>
+          <i className="nes-squirtle"></i>
+          <i className="nes-kirby"></i>
+        </div>
+        <h1 
+          className="text-4xl md:text-4xl font-bold mb-8 animate-fadeIn" 
           style={{ 
             fontFamily: 'var(--font-press-start-2p)', 
             marginBottom: '2rem', 
             marginTop: 0,
-            textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+            textShadow: '2px 2px 0px rgba(0,0,0,0.1)',
+            fontSize: '80px',
+            lineHeight: '1'
           }}
         >
           Build Anything You Imagine
-        </h2>
+        </h1>
         <p 
           className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12" 
           style={{ 
             fontFamily: 'var(--font-press-start-2p)', 
-            fontSize: '16px',
+            fontSize: '12px',
             lineHeight: '1.8'
           }}
         >
@@ -57,10 +71,13 @@ export function HeroSection() {
         </p>
         <Link
           href="/builder"
-          className="nes-btn is-primary inline-flex items-center justify-center text-lg px-8 py-4 transition-transform hover:scale-105"
+          className="nes-btn is-primary inline-flex items-center justify-center text-lg px-8 py-4 transition-transform hover:scale-105 homepage-cta"
           style={{
-            fontSize: '18px',
+            fontSize: '24px',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            padding: '1rem 2rem !important',
+            margin: '0.5rem !important',
+            borderWidth: '6px !important'
           }}
         >
           Start Building
@@ -73,11 +90,9 @@ export function HeroSection() {
 export function GallerySection() {
   return (
     <section className="py-16" id="gallery">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: 'var(--font-press-start-2p)', marginBottom: '1rem', marginTop: 0 }}>Gallery</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px' }}>
-          Check out these amazing creations made from the community
-        </p>
+      <div className="gallery-header">
+        <h2>Gallery</h2>
+        <div className="gallery-header-line"></div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <GalleryItem name="Castle" color="#CC0000" />
@@ -87,7 +102,7 @@ export function GallerySection() {
       <div className="text-center mt-10">
         <Link
           href="/builder"
-          className="nes-btn is-primary"
+          className="nes-btn is-primary gallery-view-all"
         >
           View All
         </Link>
@@ -98,8 +113,10 @@ export function GallerySection() {
 
 function GalleryItem({ name, color }: { name: string; color: string }) {
   return (
-    <div className="nes-container with-title">
-      <p className="title" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px' }}>{name}</p>
+    <div className="gallery-item">
+      <div className="gallery-item-header">
+        <p style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px', margin: 0 }}>{name}</p>
+      </div>
       <div
         className="h-48"
         style={{
@@ -119,7 +136,9 @@ function GalleryItem({ name, color }: { name: string; color: string }) {
           />
         </div>
       </div>
-      <p className="text-gray-600 text-sm mt-2" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>Created by LEGO Builder</p>
+      <div className="gallery-item-footer">
+        <p style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px', margin: 0 }}>Created by LEGO Builder</p>
+      </div>
     </div>
   )
 }
@@ -130,12 +149,10 @@ export function Footer() {
       <div className="nes-separator mb-6"></div>
       <div className="flex flex-col md:flex-row justify-between items-center px-4">
         <div className="flex items-center mb-4 md:mb-0">
-          <p className="text-sm" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>© 2025 LEGO Builder.</p>
+          <p className="text-sm" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px' }}>© 2025 LEGO Builder.</p>
         </div>
         <div className="flex space-x-6">
-          <Link href="#" className="nes-btn">
-            Contact
-          </Link>
+        <p className="text-sm" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px' }}>Zuhair Aziz</p>
         </div>
       </div>
     </footer>

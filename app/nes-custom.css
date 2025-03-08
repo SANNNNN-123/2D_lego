@@ -151,4 +151,86 @@
   font-family: var(--font-press-start-2p) !important;
   font-size: 12px !important;
   line-height: 1.5 !important;
+}
+
+/* Custom homepage CTA button */
+.homepage-cta.nes-btn {
+  font-size: 24px !important;
+  padding: 1rem 2rem !important;
+  margin: 0.5rem !important;
+  border-width: 6px !important;
+  line-height: 1.5 !important;
+}
+
+.homepage-cta.nes-btn.is-primary::after {
+  box-shadow: inset -6px -6px #006bb3 !important;
+}
+
+/* Counter notification banner */
+.counter-notification {
+  background-color: #f8f8f8;
+  border: 2px solid #000;
+  border-radius: 4px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+}
+
+.counter-notification .nes-icon {
+  margin-right: 10px;
+}
+
+.counter-notification span {
+  font-family: var(--font-press-start-2p);
+  font-size: 14px;
+  color: #333;
+}
+
+/* Gallery section styling */
+.gallery-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.gallery-header h2 {
+  font-family: var(--font-press-start-2p);
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  margin-right: 16px;
+  white-space: nowrap;
+}
+
+.gallery-header-line {
+  height: 8px;
+  background-color: #000;
+  flex-grow: 1;
+}
+
+.gallery-item {
+  border: 4px solid #000;
+  background-color: #fff;
+}
+
+.gallery-item-header {
+  border-bottom: 4px solid #000;
+  padding: 4px 8px;
+  background-color: #fff;
+}
+
+.gallery-item-footer {
+  border-top: 4px solid #000;
+  padding: 4px 8px;
+  background-color: #fff;
+}
+
+.gallery-view-all {
+  background-color: #1E90FF !important;
+  color: white !important;
+  border-color: black !important;
+  font-size: 14px !important;
+  padding: 8px 16px !important;
 } 

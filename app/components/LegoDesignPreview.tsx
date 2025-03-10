@@ -24,8 +24,6 @@ const LegoDesignPreview: React.FC<LegoDesignPreviewProps> = ({
         position: 'relative',
         width: `${width * cellSize}px`,
         height: `${height * cellSize}px`,
-        border: '1px solid #ccc',
-        boxSizing: 'border-box',
         backgroundColor: 'white'
       }}
     >
@@ -42,7 +40,6 @@ const LegoDesignPreview: React.FC<LegoDesignPreviewProps> = ({
                 width: `${cellSize}px`,
                 height: `${cellSize}px`,
                 backgroundColor: color,
-                boxSizing: 'border-box',
                 border: '1px solid rgba(128,128,128,0.3)'
               }}
             />

@@ -4,11 +4,13 @@ import LegoStud from './LegoStud';
 interface LegoDesignPreviewProps {
   pixelData: (string | null)[][];
   cellSize?: number;
+  galleryMode?: boolean;
 }
 
 const LegoDesignPreview: React.FC<LegoDesignPreviewProps> = ({ 
   pixelData, 
-  cellSize = 24 
+  cellSize = 24,
+  galleryMode = false
 }) => {
   if (!pixelData || pixelData.length === 0) {
     return <div className="text-center p-4">No design data available</div>;
@@ -19,7 +21,7 @@ const LegoDesignPreview: React.FC<LegoDesignPreviewProps> = ({
 
   return (
     <div 
-      className="lego-design-preview"
+      className={`lego-design-preview ${galleryMode ? 'gallery-mode' : ''}`}
       style={{
         position: 'relative',
         width: `${width * cellSize}px`,
@@ -40,7 +42,7 @@ const LegoDesignPreview: React.FC<LegoDesignPreviewProps> = ({
                 width: `${cellSize}px`,
                 height: `${cellSize}px`,
                 backgroundColor: color,
-                border: '1px solid rgba(128,128,128,0.3)'
+                border: galleryMode ? 'none' : '1px solid rgba(128,128,128,0.3)'
               }}
             />
           )
@@ -48,7 +50,7 @@ const LegoDesignPreview: React.FC<LegoDesignPreviewProps> = ({
       )}
       
       {/* Render the studs using the LegoStud component */}
-      {pixelData.map((row, y) => 
+      {!galleryMode && pixelData.map((row, y) => 
         row.map((color, x) => 
           color && (
             <LegoStud

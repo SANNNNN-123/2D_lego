@@ -1,5 +1,13 @@
+'use client';
+
 import Link from "next/link"
 import Image from "next/image"
+import { lazy, Suspense } from "react";
+import './Gallery/gallery.css';
+
+// Lazy load the components instead of using next/dynamic
+const GalleryContainer = lazy(() => import('./Gallery/GalleryContainer'));
+const DesignCounter = lazy(() => import('./Gallery/DesignCounter'));
 
 export function Header() {
   return (
@@ -35,7 +43,7 @@ export function HeroSection() {
       <div className="max-w-5xl mx-auto px-4">
         <div className="counter-notification">
           <span className="nes-icon coin is-small"></span>
-          <span>11 pixel art LEGO created!</span>
+          <span id="design-counter">Loading designs...</span>
         </div>
         <div className="flex justify-center space-x-4 mb-8">
           <i className="nes-ash"></i>
@@ -94,17 +102,25 @@ export function GallerySection() {
         <h2>Gallery</h2>
         <div className="gallery-header-line"></div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <GalleryItem name="Castle" color="#CC0000" />
-        <GalleryItem name="Spaceship" color="#0000CC" />
-        <GalleryItem name="Robot" color="#006400" />
+      
+      {/* Replace the static gallery items with the dynamic GalleryContainer */}
+      <div className="mt-8">
+        <Suspense fallback={
+          <div className="text-center py-12">
+            <div className="nes-text is-primary">Loading gallery...</div>
+            <i className="nes-icon is-large star is-half"></i>
+          </div>
+        }>
+          <GalleryContainer />
+        </Suspense>
       </div>
+      
       <div className="text-center mt-10">
         <Link
           href="/builder"
           className="nes-btn is-primary gallery-view-all"
         >
-          View All
+          View All Gallery
         </Link>
       </div>
     </section>
@@ -168,6 +184,9 @@ export default function HomePage() {
         <HeroSection />
         <GallerySection />
         <Footer />
+        <Suspense fallback={null}>
+          <DesignCounter />
+        </Suspense>
       </div>
     </div>
   )

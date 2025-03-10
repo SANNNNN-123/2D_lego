@@ -84,4 +84,71 @@ export const saveDesign = async (designData: DesignData) => {
   } catch (error) {
     return { success: false, error };
   }
+};
+
+export const fetchDesigns = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('designs')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching designs:', error);
+      return { success: false, error };
+    }
+    
+    return { 
+      success: true, 
+      data: data.map(item => ({
+        id: item.id,
+        name: item.name,
+        creator: item.creator,
+        image: item.image,
+        pixelData: item.pixel_data,
+        colorPalette: item.color_palette,
+        bounds: item.bounds,
+        createdAt: item.created_at
+      }))
+    };
+  } catch (error) {
+    console.error('Exception fetching designs:', error);
+    return { success: false, error };
+  }
+};
+
+export const fetchDesignById = async (id: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('designs')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.error(`Error fetching design with id ${id}:`, error);
+      return { success: false, error };
+    }
+    
+    if (!data) {
+      return { success: false, error: { message: 'Design not found' } };
+    }
+    
+    return { 
+      success: true, 
+      data: {
+        id: data.id,
+        name: data.name,
+        creator: data.creator,
+        image: data.image,
+        pixelData: data.pixel_data,
+        colorPalette: data.color_palette,
+        bounds: data.bounds,
+        createdAt: data.created_at
+      }
+    };
+  } catch (error) {
+    console.error(`Exception fetching design with id ${id}:`, error);
+    return { success: false, error };
+  }
 }; 

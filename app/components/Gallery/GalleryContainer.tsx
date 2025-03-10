@@ -71,7 +71,11 @@ export default function GalleryContainer() {
     return (
       <div className="text-center py-12 gallery-loading">
         <div className="nes-text is-primary">Loading designs...</div>
-        <i className="nes-icon is-large star is-half mt-4"></i>
+        <i className="nes-icon is-large heart is-empty mt-4"></i>
+        <i className="nes-icon is-large heart is-empty mt-4"></i>
+        <i className="nes-icon is-large is-transparent heart mt-4"></i>
+        <i className="nes-icon is-large is-half heart mt-4"></i>
+        <i className="nes-icon is-large heart mt-4"></i>
       </div>
     );
   }

@@ -89,7 +89,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit, captureDesig
       <div className="flex justify-between items-center mb-4 px-4">
         <div className="flex gap-2">
           <button className="nes-btn" onClick={() => console.log('Pieces clicked')}>
-            PIECES
+            GALLERY
           </button>
           <button className="nes-btn" onClick={onClear}>
             CLEAR

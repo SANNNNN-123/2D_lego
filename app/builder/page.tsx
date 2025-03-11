@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import Board from '../components/Board';
 import { useSearchParams } from 'next/navigation';
 import { useDesign } from '../context/DesignContext';
 import { fetchDesignById } from '../services/supabaseService';
 
-export default function Builder() {
+// Create a client component that uses useSearchParams
+function BuilderContent() {
   const searchParams = useSearchParams();
   const designId = searchParams.get('id');
   const { setSelectedDesign } = useDesign();
@@ -45,5 +46,14 @@ export default function Builder() {
         <Board width={30} height={30} />
       </main>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function Builder() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <BuilderContent />
+    </Suspense>
   );
 } 

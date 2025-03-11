@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { Design } from './GalleryContainer';
 import { useDesign } from '../../context/DesignContext';
@@ -9,7 +9,8 @@ interface DesignSelectorProps {
   designs: Design[];
 }
 
-export default function DesignSelector({ designs }: DesignSelectorProps) {
+// Component that uses useRouter
+function DesignSelectorContent({ designs }: DesignSelectorProps) {
   const router = useRouter();
   const { setSelectedDesign } = useDesign();
 
@@ -55,4 +56,13 @@ export default function DesignSelector({ designs }: DesignSelectorProps) {
 
   // This component doesn't render anything visible
   return null;
+}
+
+// Main component with Suspense boundary
+export default function DesignSelector(props: DesignSelectorProps) {
+  return (
+    <Suspense fallback={null}>
+      <DesignSelectorContent {...props} />
+    </Suspense>
+  );
 } 

@@ -220,9 +220,7 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
       <div className="flex justify-center items-center mt-4" style={{ height: '24px' }}>
         <div style={{ 
           display: 'flex', 
-          alignItems: 'center', 
-          border: '2px solid #000', 
-          borderRadius: '0px',
+          alignItems: 'center',
           height: '24px',
           overflow: 'hidden'
         }}>
@@ -252,8 +250,6 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
             lineHeight: '20px',
             display: 'flex',
             alignItems: 'center',
-            borderLeft: '2px solid #000',
-            borderRight: '2px solid #000'
           }}>
             Zoom: {Math.round(scale * 100)}%
           </div>

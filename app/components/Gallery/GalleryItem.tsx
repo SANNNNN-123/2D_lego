@@ -7,9 +7,10 @@ import LegoDesignPreview from '../LegoDesignPreview';
 
 interface GalleryItemProps {
   design: Design;
+  onDesignSelect?: (design: Design) => void;
 }
 
-export default function GalleryItem({ design }: GalleryItemProps) {
+export default function GalleryItem({ design, onDesignSelect }: GalleryItemProps) {
   const [dominantColor, setDominantColor] = useState<string>('#CCCCCC');
   const [trimmedPixelData, setTrimmedPixelData] = useState<(string | null)[][]>([]);
   

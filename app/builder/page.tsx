@@ -1,9 +1,44 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Board from '../components/Board';
+import { useSearchParams } from 'next/navigation';
+import { useDesign } from '../context/DesignContext';
+import { fetchDesignById } from '../services/supabaseService';
 
 export default function Builder() {
+  const searchParams = useSearchParams();
+  const designId = searchParams.get('id');
+  const { setSelectedDesign } = useDesign();
+
+  useEffect(() => {
+    // If there's a design ID in the URL, fetch the design and set it in context
+    if (designId) {
+      const loadDesign = async () => {
+        try {
+          const result = await fetchDesignById(designId);
+          if (result.success && result.data) {
+            // Set the selected design in context
+            setSelectedDesign(result.data);
+            
+            // Add a small delay to ensure the TabFolder component is mounted
+            setTimeout(() => {
+              // Find the "Learn to Design" tab button and click it
+              const learnDesignTab = document.querySelector('.nes-btn:not(.is-primary)');
+              if (learnDesignTab) {
+                (learnDesignTab as HTMLButtonElement).click();
+              }
+            }, 500);
+          }
+        } catch (error) {
+          console.error('Error loading design:', error);
+        }
+      };
+      
+      loadDesign();
+    }
+  }, [designId, setSelectedDesign]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white p-4">
       <main className="flex-1 flex items-center justify-center">

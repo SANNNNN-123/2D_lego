@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { fetchDesigns } from '../../services/supabaseService';
 import GalleryItem from './GalleryItem';
 import Link from 'next/link';
+import DesignSelector from './DesignSelector';
 
 export interface Design {
   id: string;
@@ -28,13 +29,15 @@ interface GalleryContainerProps {
   showViewAll?: boolean;
   showPagination?: boolean;
   itemsPerPage?: number;
+  onDesignSelect?: (design: Design) => void;
 }
 
 export default function GalleryContainer({ 
   limit, 
   showViewAll = true,
   showPagination = false,
-  itemsPerPage = 9
+  itemsPerPage = 9,
+  onDesignSelect
 }: GalleryContainerProps) {
   const [designs, setDesigns] = useState<Design[]>([]);
   const [allDesigns, setAllDesigns] = useState<Design[]>([]);
@@ -214,9 +217,15 @@ export default function GalleryContainer({
 
   return (
     <div className="gallery-container">
+      <DesignSelector designs={designs} />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {designs.map((design) => (
-          <GalleryItem key={design.id} design={design} />
+          <GalleryItem 
+            key={design.id} 
+            design={design} 
+            onDesignSelect={onDesignSelect}
+          />
         ))}
       </div>
       

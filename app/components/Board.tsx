@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LegoPiece, PieceColor } from '../types';
 import LegoStud from './LegoStud';
 import ColorPalette from './ColorPalette';
-import ImagePrompt from './ImagePrompt';
 import GameHeader from './GameHeader';
 import html2canvas from 'html2canvas';
+import TabFolder from './TabFolder';
 
 interface BoardProps {
   width: number;
@@ -242,10 +242,12 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
       )}
 
       <div className="flex gap-8 items-start justify-center mt-4">
-        {/* Image Prompt Component */}
-        <ImagePrompt onSubmit={(prompt) => {
-          // console.log("Image prompt submitted:", prompt);
-        }} />
+        {/* Tab Folder Component */}
+        <TabFolder 
+          onImagePromptSubmit={(prompt) => {
+            // console.log("Image prompt submitted:", prompt);
+          }} 
+        />
 
         <div
           ref={boardRef}

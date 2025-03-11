@@ -4,6 +4,7 @@ import { Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import "nes.css/css/nes.min.css";
 import "./nes-custom.css";
+import { DesignProvider } from "./context/DesignContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +41,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${pressStart2P.variable} antialiased nes-style`}
       >
-        {children}
+        <DesignProvider>
+          {children}
+        </DesignProvider>
       </body>
     </html>
   );

@@ -115,14 +115,29 @@ export default function GalleryItem({ design, onDesignSelect }: GalleryItemProps
   };
 
   return (
-    <div className="gallery-item">
+    <div 
+      className={`gallery-item nes-container custom-cursor ${onDesignSelect ? 'cursor-pointer' : ''}`}
+      onClick={() => onDesignSelect && onDesignSelect(design)}
+      style={{
+        backgroundImage: !hasImage && !hasPixelData
+          ? `repeating-linear-gradient(45deg, ${dominantColor}22, ${dominantColor}22 10px, ${dominantColor}44 10px, ${dominantColor}44 20px)`
+          : 'none',
+        backgroundSize: "100px 100px",
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        border: 'none'
+      }}
+    >
       <div className="gallery-item-header">
         <p style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px', margin: 0 }}>
           {design.name || 'Untitled Design'}
         </p>
       </div>
       
-      <Link href={`/builder?id=${design.id}`}>
+      <Link href={`/builder?id=${design.id}`} className="custom-cursor">
         <div
           className={`h-48 cursor-pointer overflow-hidden ${isLargeDesign() ? 'large-design' : ''}`}
           style={{

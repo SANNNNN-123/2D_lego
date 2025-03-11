@@ -44,7 +44,7 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
   };
 
   return (
-    <div className="nes-container with-title" style={{ padding: '1rem' }}>
+    <div className="nes-container with-title custom-cursor" style={{ padding: '1rem' }}>
       <p className="title" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>Colors</p>
       <div className="grid grid-cols-5 gap-2">
         {colors.map(color => renderLegoPiece(color))}

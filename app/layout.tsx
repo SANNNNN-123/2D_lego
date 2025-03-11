@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${pressStart2P.variable} antialiased nes-style`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pressStart2P.variable} antialiased nes-style custom-cursor`}
       >
         <DesignProvider>
           {children}

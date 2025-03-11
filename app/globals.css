@@ -11,6 +11,25 @@
   font-display: swap;
 }
 
+/* Custom cursor styles */
+.custom-cursor {
+  cursor: url('/cursor.png'), auto;
+}
+
+.custom-cursor-click {
+  cursor: url('/cursor-click.png'), pointer;
+}
+
+/* Apply custom cursor to interactive elements */
+.custom-cursor button:hover,
+.custom-cursor a:hover,
+.custom-cursor input:hover,
+.custom-cursor select:hover,
+.custom-cursor .color-swatch:hover,
+.custom-cursor .piece-option:hover {
+  cursor: url('/cursor-click.png'), pointer;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

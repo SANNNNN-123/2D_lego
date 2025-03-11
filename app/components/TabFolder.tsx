@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 import ImagePrompt from './ImagePrompt';
 import LearnDesignPreview from './LearnDesignPreview';
 import { useDesign } from '../context/DesignContext';
+import { LegoPiece } from '../types';
 
 interface TabFolderProps {
   onImagePromptSubmit?: (prompt: string) => void;
+  onTrace?: (pieces: LegoPiece[]) => void;
 }
 
-const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit }) => {
+const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace }) => {
   const [activeTab, setActiveTab] = useState<'imageGen' | 'learnDesign'>('imageGen');
   const { selectedDesign } = useDesign();
   
@@ -59,6 +61,7 @@ const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit }) => {
               pixelData={selectedDesign?.pixelData || []}
               designName={selectedDesign?.name}
               creatorName={selectedDesign?.creator}
+              onTrace={onTrace}
             />
           </div>
         )}

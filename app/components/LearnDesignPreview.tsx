@@ -3,17 +3,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import LegoDesignPreview from './LegoDesignPreview';
 import { useDesign } from '../context/DesignContext';
+import { LegoPiece, PieceColor } from '../types';
 
 interface LearnDesignPreviewProps {
   pixelData: (string | null)[][];
   designName?: string;
   creatorName?: string;
+  onTrace?: (pieces: LegoPiece[]) => void;
 }
 
 const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({ 
   pixelData, 
   designName = 'Untitled Design',
-  creatorName = 'Anonymous'
+  creatorName = 'Anonymous',
+  onTrace
 }) => {
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,21 +93,36 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
     
     if (!selectedDesign || !selectedDesign.pixelData) return;
     
-    // Here you would implement the logic to trace the design
-    // For example, you could dispatch an action to your state management
-    // to place Lego pieces on the board according to the design
+    // Create an array to hold all the pieces we'll place
+    const piecesToPlace: LegoPiece[] = [];
     
-    console.log('Tracing design:', selectedDesign.name);
+    // Iterate through the pixel data to create pieces
+    selectedDesign.pixelData.forEach((row, y) => {
+      row.forEach((color, x) => {
+        if (color) {
+          // Create a new piece for each colored pixel
+          const newPiece: LegoPiece = {
+            id: `traced-piece-${x}-${y}-${Date.now()}`,
+            type: 'Plate',
+            size: [1, 1],
+            position: [x, y],
+            color: color as PieceColor,
+          };
+          
+          piecesToPlace.push(newPiece);
+        }
+      });
+    });
     
-    // Example of how you might access the pixel data:
-    // selectedDesign.pixelData.forEach((row, y) => {
-    //   row.forEach((color, x) => {
-    //     if (color) {
-    //       // Place a Lego piece at position (x, y) with the given color
-    //       placePieceAt(x, y, color);
-    //     }
-    //   });
-    // });
+    // If we have an onTrace callback, call it with the pieces to place
+    if (onTrace) {
+      onTrace(piecesToPlace);
+    }
+    
+    // After a short delay, reset the tracing state
+    setTimeout(() => {
+      setIsTracing(false);
+    }, 100);
   };
   
   // Render a color swatch for the color palette
@@ -202,7 +220,9 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
       <div className="flex justify-center items-center mt-4" style={{ height: '24px' }}>
         <div style={{ 
           display: 'flex', 
-          alignItems: 'center',
+          alignItems: 'center', 
+          border: '2px solid #000', 
+          borderRadius: '0px',
           height: '24px',
           overflow: 'hidden'
         }}>
@@ -231,7 +251,9 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
             height: '20px', 
             lineHeight: '20px',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            borderLeft: '2px solid #000',
+            borderRight: '2px solid #000'
           }}>
             Zoom: {Math.round(scale * 100)}%
           </div>

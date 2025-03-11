@@ -207,6 +207,17 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
     };
   };
 
+  // Handle tracing a design
+  const handleTrace = (tracedPieces: LegoPiece[]) => {
+    // Clear the board first
+    setPieces([]);
+    
+    // Add a small delay before placing the traced pieces
+    setTimeout(() => {
+      setPieces(tracedPieces);
+    }, 100);
+  };
+
   return (
     <div className="flex flex-col items-center w-full">
       <GameHeader 
@@ -247,6 +258,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
           onImagePromptSubmit={(prompt) => {
             // console.log("Image prompt submitted:", prompt);
           }} 
+          onTrace={handleTrace}
         />
 
         <div

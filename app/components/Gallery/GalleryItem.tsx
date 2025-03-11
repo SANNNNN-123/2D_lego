@@ -42,12 +42,6 @@ export default function GalleryItem({ design }: GalleryItemProps) {
       
       // If we found any non-null cells
       if (minX !== Infinity && minY !== Infinity) {
-        // Add some padding around the design (1 cell on each side)
-        minX = Math.max(0, minX - 1);
-        minY = Math.max(0, minY - 1);
-        maxX = Math.min(design.pixelData[0].length - 1, maxX + 1);
-        maxY = Math.min(design.pixelData.length - 1, maxY + 1);
-        
         // Second pass: create a new array with only the cells within the bounds
         const trimmed: (string | null)[][] = [];
         for (let y = minY; y <= maxY; y++) {
@@ -90,14 +84,34 @@ export default function GalleryItem({ design }: GalleryItemProps) {
     // Use the smaller scale to ensure it fits
     let scale = Math.min(scaleX, scaleY);
     
-    // Cap the scale to reasonable values
-    scale = Math.min(scale, 1.0); // Don't make it too big
-    scale = Math.max(scale, 0.4); // Don't make it too small
+    // Apply additional scaling for very large designs
+    const maxDimension = Math.max(width, height);
+    
+    if (maxDimension > 30) {
+      scale = Math.min(scale, 0.3); // Very large designs (like Totoro)
+    } else if (maxDimension > 20) {
+      scale = Math.min(scale, 0.4); // Large designs (like Agumon)
+    } else if (maxDimension > 15) {
+      scale = Math.min(scale, 0.6); // Medium designs
+    } else {
+      scale = Math.min(scale, 0.9); // Small designs
+    }
+    
+    // Ensure the scale doesn't get too small
+    scale = Math.max(scale, 0.2);
     
     return scale;
   };
   
   const previewScale = calculatePreviewScale();
+
+  // Determine if this is a large design that needs special handling
+  const isLargeDesign = () => {
+    if (!hasPixelData) return false;
+    const width = trimmedPixelData[0]?.length || 0;
+    const height = trimmedPixelData.length || 0;
+    return width > 20 || height > 20;
+  };
 
   return (
     <div className="gallery-item">
@@ -109,7 +123,7 @@ export default function GalleryItem({ design }: GalleryItemProps) {
       
       <Link href={`/builder?id=${design.id}`}>
         <div
-          className="h-48 cursor-pointer overflow-hidden"
+          className={`h-48 cursor-pointer overflow-hidden ${isLargeDesign() ? 'large-design' : ''}`}
           style={{
             backgroundImage: !hasImage && !hasPixelData
               ? `repeating-linear-gradient(45deg, ${dominantColor}22, ${dominantColor}22 10px, ${dominantColor}44 10px, ${dominantColor}44 20px)`

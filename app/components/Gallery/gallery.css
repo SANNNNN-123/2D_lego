@@ -23,6 +23,8 @@
   transition: transform 0.2s ease-in-out;
   background-color: white;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .gallery-item:hover {
@@ -42,6 +44,7 @@
   padding: 0.5rem 1rem;
   border-top: 4px solid #000;
   font-family: var(--font-press-start-2p);
+  margin-top: auto;
 }
 
 .gallery-view-all {
@@ -85,6 +88,7 @@
   justify-content: center;
   align-items: center;
   background-color: white;
+  flex: 1;
 }
 
 /* Style the preview wrapper */
@@ -94,6 +98,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 /* Make sure the studs are visible and properly sized */
@@ -105,6 +111,10 @@
 .gallery-item .h-48 {
   min-height: 192px;
   border: none;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Special styling for gallery mode */
@@ -116,4 +126,82 @@
 .gallery-item .stud,
 .gallery-item .stud-base {
   transform: scale(0.75);
+}
+
+/* Gallery page specific styles */
+.gallery-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.gallery-page-title {
+  font-family: var(--font-press-start-2p);
+  font-size: 24px;
+  margin: 0;
+}
+
+.gallery-page-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Pagination styles */
+.gallery-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 0.5rem;
+}
+
+.gallery-pagination-item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #000;
+  font-family: var(--font-press-start-2p);
+  font-size: 14px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.gallery-pagination-item.active {
+  background-color: #000;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gallery-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .gallery-page-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Special handling for large designs */
+.gallery-item .large-design .lego-preview-wrapper {
+  transform-origin: center;
+}
+
+.gallery-item .large-design .lego-design-preview {
+  transform-origin: center;
+}
+
+.gallery-item .large-design .stud,
+.gallery-item .large-design .stud-base {
+  transform: scale(0.6);
 } 

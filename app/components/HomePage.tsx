@@ -111,51 +111,10 @@ export function GallerySection() {
             <i className="nes-icon is-large star is-half"></i>
           </div>
         }>
-          <GalleryContainer />
+          <GalleryContainer limit={9} />
         </Suspense>
       </div>
-      
-      <div className="text-center mt-10">
-        <Link
-          href="/builder"
-          className="nes-btn is-primary gallery-view-all"
-        >
-          View All Gallery
-        </Link>
-      </div>
     </section>
-  )
-}
-
-function GalleryItem({ name, color }: { name: string; color: string }) {
-  return (
-    <div className="gallery-item">
-      <div className="gallery-item-header">
-        <p style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '12px', margin: 0 }}>{name}</p>
-      </div>
-      <div
-        className="h-48"
-        style={{
-          backgroundImage: `repeating-linear-gradient(45deg, ${color}22, ${color}22 10px, ${color}44 10px, ${color}44 20px)`,
-          backgroundSize: "100px 100px",
-        }}
-      >
-        <div className="h-full flex items-center justify-center">
-          <div
-            className="w-24 h-24"
-            style={{
-              backgroundColor: color,
-              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 3px, transparent 3px)",
-              backgroundSize: "12px 12px",
-              backgroundPosition: "6px 6px",
-            }}
-          />
-        </div>
-      </div>
-      <div className="gallery-item-footer">
-        <p style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px', margin: 0 }}>Created by LEGO Builder</p>
-      </div>
-    </div>
   )
 }
 

@@ -84,21 +84,21 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit, captureDesig
   };
 
   return (
-    <div className="w-full mb-8">
+    <div className="w-full mb-8 custom-cursor">
       <div className="flex justify-between items-center mb-4 px-4">
         <div className="flex gap-2">
-          <button className="nes-btn" onClick={() => console.log('Pieces clicked')}>
+          <button className="nes-btn custom-cursor-click" onClick={() => console.log('Pieces clicked')}>
             GALLERY
           </button>
-          <button className="nes-btn" onClick={onClear}>
+          <button className="nes-btn custom-cursor-click" onClick={onClear}>
             CLEAR
           </button>
-          <button className="nes-btn" onClick={handleSubmitClick}>
+          <button className="nes-btn custom-cursor-click" onClick={handleSubmitClick}>
             SUBMIT
           </button>
         </div>
         <div>
-          <Link href="/" className="nes-btn">
+          <Link href="/" className="nes-btn custom-cursor-click">
             HOME
           </Link>
         </div>

@@ -116,7 +116,7 @@ export default function GalleryItem({ design, onDesignSelect }: GalleryItemProps
 
   return (
     <div 
-      className={`gallery-item nes-container custom-cursor ${onDesignSelect ? 'cursor-pointer' : ''}`}
+      className={`gallery-item nes-container custom-cursor ${onDesignSelect ? 'custom-cursor-click' : ''}`}
       onClick={() => onDesignSelect && onDesignSelect(design)}
       style={{
         backgroundImage: !hasImage && !hasPixelData
@@ -128,7 +128,8 @@ export default function GalleryItem({ design, onDesignSelect }: GalleryItemProps
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
-        border: 'none'
+        border: 'none',
+        cursor: onDesignSelect ? 'url("/cursor-click.png"), pointer' : 'url("/cursor.png"), auto'
       }}
     >
       <div className="gallery-item-header">
@@ -137,9 +138,9 @@ export default function GalleryItem({ design, onDesignSelect }: GalleryItemProps
         </p>
       </div>
       
-      <Link href={`/builder?id=${design.id}`} className="custom-cursor">
+      <Link href={`/builder?id=${design.id}`} className="custom-cursor-click">
         <div
-          className={`h-48 cursor-pointer overflow-hidden ${isLargeDesign() ? 'large-design' : ''}`}
+          className={`h-48 overflow-hidden ${isLargeDesign() ? 'large-design' : ''} custom-cursor-click`}
           style={{
             backgroundImage: !hasImage && !hasPixelData
               ? `repeating-linear-gradient(45deg, ${dominantColor}22, ${dominantColor}22 10px, ${dominantColor}44 10px, ${dominantColor}44 20px)`
@@ -149,8 +150,7 @@ export default function GalleryItem({ design, onDesignSelect }: GalleryItemProps
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'white',
-            border: 'none'
+            cursor: 'url("/cursor-click.png"), pointer'
           }}
         >
           {hasImage ? (

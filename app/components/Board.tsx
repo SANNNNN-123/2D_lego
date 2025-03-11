@@ -233,14 +233,14 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
             <p className="nes-text mb-4" style={{ fontSize: '10px' }}>Are you sure you want to clear all blocks from the design?</p>
             <div className="flex justify-center gap-4">
               <button 
-                className="nes-btn"
+                className="nes-btn custom-cursor-click"
                 onClick={() => setShowClearConfirmation(false)}
                 style={{ margin: '0' }}
               >
                 No
               </button>
               <button 
-                className="nes-btn is-error"
+                className="nes-btn is-error custom-cursor-click"
                 onClick={handleClearBoard}
                 style={{ margin: '0' }}
               >

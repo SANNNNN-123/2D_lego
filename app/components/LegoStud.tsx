@@ -29,7 +29,7 @@ const LegoStud: React.FC<LegoStudProps> = ({
     top: `${y * 24 + 4}px`,
     left: `${x * 24 + 4}px`,
     zIndex: isOnPiece ? 3 : 1,
-    cursor: isClickable ? 'pointer' : 'inherit',
+    cursor: isClickable ? 'url("/cursor-click.png"), pointer' : 'url("/cursor.png"), auto',
     transition: 'background-color 0.1s ease',
   };
 
@@ -56,7 +56,7 @@ const LegoStud: React.FC<LegoStudProps> = ({
 
   return (
     <div 
-      className={isOnPiece ? "stud" : "stud-base"} 
+      className={`${isOnPiece ? "stud" : "stud-base"} ${isClickable ? "custom-cursor-click" : "custom-cursor"}`}
       style={studStyle}
       onMouseDown={(e) => {
         e.preventDefault();

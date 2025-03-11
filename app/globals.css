@@ -11,23 +11,37 @@
   font-display: swap;
 }
 
-/* Custom cursor styles */
-.custom-cursor {
-  cursor: url('/cursor.png'), auto;
+/* Custom cursor styles with higher specificity */
+html body .custom-cursor, 
+html body .custom-cursor * {
+  cursor: url('/cursor.png'), auto !important;
 }
 
-.custom-cursor-click {
-  cursor: url('/cursor-click.png'), pointer;
+html body .custom-cursor-click, 
+html body .custom-cursor-click * {
+  cursor: url('/cursor-click.png'), pointer !important;
 }
 
-/* Apply custom cursor to interactive elements */
-.custom-cursor button:hover,
-.custom-cursor a:hover,
-.custom-cursor input:hover,
-.custom-cursor select:hover,
-.custom-cursor .color-swatch:hover,
-.custom-cursor .piece-option:hover {
-  cursor: url('/cursor-click.png'), pointer;
+/* Apply custom cursor to interactive elements with higher specificity */
+html body .custom-cursor button:hover,
+html body .custom-cursor a:hover,
+html body .custom-cursor input:hover,
+html body .custom-cursor select:hover,
+html body .custom-cursor .color-swatch:hover,
+html body .custom-cursor .piece-option:hover,
+html body .custom-cursor [role="button"]:hover,
+html body .custom-cursor .gallery-item:hover,
+html body .gallery-item.custom-cursor:hover,
+html body .gallery-item .custom-cursor-click:hover {
+  cursor: url('/cursor-click.png'), pointer !important;
+}
+
+/* Ensure cursor styles are applied to all elements with higher specificity */
+html body button.custom-cursor-click,
+html body a.custom-cursor-click,
+html body input.custom-cursor-click,
+html body .nes-btn.custom-cursor-click {
+  cursor: url('/cursor-click.png'), pointer !important;
 }
 
 :root {

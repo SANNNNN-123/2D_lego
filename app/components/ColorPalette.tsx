@@ -52,7 +52,7 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
       
       <div className="flex items-center gap-2 mt-4">
         <div 
-          className="relative cursor-pointer"
+          className="relative cursor-pointer custom-cursor-click"
           style={{
             width: '32px',
             height: '32px',
@@ -64,13 +64,13 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
             type="color" 
             value={selectedColor || '#FF0000'} 
             onChange={(e) => onColorSelect(e.target.value)}
-            className="absolute"
+            className="absolute custom-cursor-click"
             style={{
               width: '40px',
               height: '40px',
               top: '-5px',
               left: '-5px',
-              cursor: 'pointer',
+              cursor: 'url("/cursor-click.png"), pointer',
             }}
           />
         </div>

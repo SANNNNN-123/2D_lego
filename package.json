@@ -14,8 +14,10 @@
     "lucide-react": "^0.477.0",
     "nes.css": "^2.2.1",
     "next": "15.2.1",
+    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-pixelify": "^0.2.2",
     "together-ai": "^0.13.0"
   },
   "devDependencies": {

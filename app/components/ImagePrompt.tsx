@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Pixelify } from 'react-pixelify';
 
 interface ImagePromptProps {
   onSubmit?: (prompt: string) => void;
@@ -11,7 +12,6 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
   const [progress, setProgress] = useState(0);
   const [pixelated, setPixelated] = useState(false);
   const [gridSize, setGridSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   // Get pixel size based on selected grid size
@@ -23,62 +23,23 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
     }
   };
 
-  // Apply pixelation effect when image loads or pixelated state changes
-  useEffect(() => {
-    if (!imageSrc || !pixelated) return;
-
-    const img = new Image();
-    img.src = imageSrc;
-    img.onload = () => {
-      setImageLoaded(true);
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      
-      // Set canvas dimensions
-      canvas.width = 352;
-      canvas.height = 272;
-      
-      // Draw original image to canvas
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
-      // Pixelate by drawing at a lower resolution and scaling up
-      const pixelSize = getPixelSize();
-      
-      // Get image data
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Process image data to create pixelated effect
-      for (let y = 0; y < canvas.height; y += pixelSize) {
-        for (let x = 0; x < canvas.width; x += pixelSize) {
-          // Get the color of the first pixel in the block
-          const pixelIndex = (y * canvas.width + x) * 4;
-          const r = imageData.data[pixelIndex];
-          const g = imageData.data[pixelIndex + 1];
-          const b = imageData.data[pixelIndex + 2];
-          
-          // Fill a rectangle with that color
-          ctx.fillStyle = `rgb(${r},${g},${b})`;
-          ctx.fillRect(x, y, pixelSize, pixelSize);
-          
-          // Draw grid lines
-          ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-          ctx.lineWidth = 0.5;
-          ctx.strokeRect(x, y, pixelSize, pixelSize);
-        }
-      }
-    };
-  }, [imageSrc, pixelated, gridSize]);
-
   // Reset image loaded state when toggling pixelation off
   useEffect(() => {
     if (!pixelated) {
       setImageLoaded(false);
     }
   }, [pixelated]);
+
+  // Set image as loaded when image source changes
+  useEffect(() => {
+    if (imageSrc) {
+      const img = new Image();
+      img.src = imageSrc;
+      img.onload = () => {
+        setImageLoaded(true);
+      };
+    }
+  }, [imageSrc]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,10 +113,30 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
             ) : imageSrc ? (
               <>
                 {pixelated ? (
-                  <canvas 
-                    ref={canvasRef} 
-                    style={{ width: '100%', height: '100%', display: imageLoaded ? 'block' : 'none' }}
-                  />
+                  <div style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    display: imageLoaded ? 'block' : 'none',
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      height: '100%'
+                    }}>
+                      <Pixelify
+                        src={imageSrc}
+                        pixelSize={getPixelSize()}
+                        width={260}
+                        height={220}
+                        centered={true}
+                        fillTransparencyColor="white"
+                        styled={true}
+                      />
+                    </div>
+                  </div>
                 ) : null}
                 
                 <img 
@@ -164,7 +145,8 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
                   style={{ 
                     width: '100%', 
                     height: '100%', 
-                    objectFit: 'cover',
+                    objectFit: 'contain',
+                    padding: '10px',
                     display: (!pixelated || !imageLoaded) ? 'block' : 'none'
                   }}
                 />

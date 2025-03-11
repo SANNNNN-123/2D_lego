@@ -113,7 +113,7 @@ export default function GalleryContainer({
     pages.push(
       <button 
         key="page-1" 
-        className={`gallery-pagination-item ${currentPage === 1 ? 'active' : ''}`}
+        className={`gallery-pagination-item custom-cursor-click ${currentPage === 1 ? 'active' : ''}`}
         onClick={() => handlePageChange(1)}
         disabled={currentPage === 1}
       >
@@ -137,7 +137,7 @@ export default function GalleryContainer({
       pages.push(
         <button 
           key={`page-${i}`} 
-          className={`gallery-pagination-item ${currentPage === i ? 'active' : ''}`}
+          className={`gallery-pagination-item custom-cursor-click ${currentPage === i ? 'active' : ''}`}
           onClick={() => handlePageChange(i)}
         >
           {i}
@@ -159,7 +159,7 @@ export default function GalleryContainer({
       pages.push(
         <button 
           key={`page-${totalPages}`} 
-          className={`gallery-pagination-item ${currentPage === totalPages ? 'active' : ''}`}
+          className={`gallery-pagination-item custom-cursor-click ${currentPage === totalPages ? 'active' : ''}`}
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
         >
@@ -191,7 +191,7 @@ export default function GalleryContainer({
         <div className="nes-container is-rounded is-error">
           <p>{error}</p>
           <button 
-            className="nes-btn is-error mt-4"
+            className="nes-btn is-error mt-4 custom-cursor-click"
             onClick={() => window.location.reload()}
           >
             Try Again
@@ -207,7 +207,7 @@ export default function GalleryContainer({
         <div className="nes-container is-rounded with-title">
           <p className="title">No Designs Yet</p>
           <p>Be the first to create a LEGO masterpiece!</p>
-          <Link href="/builder" className="nes-btn is-primary mt-4">
+          <Link href="/builder" className="nes-btn is-primary mt-4 custom-cursor-click">
             Start Building
           </Link>
         </div>
@@ -233,7 +233,7 @@ export default function GalleryContainer({
         <div className="text-center mt-10">
           <Link
             href="/gallery"
-            className="nes-btn is-primary gallery-view-all"
+            className="nes-btn is-primary gallery-view-all custom-cursor-click"
           >
             View All Gallery
           </Link>
@@ -243,7 +243,7 @@ export default function GalleryContainer({
       {showPagination && totalPages > 1 && (
         <div className="gallery-pagination">
           <button 
-            className="gallery-pagination-item"
+            className="gallery-pagination-item custom-cursor-click"
             onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
           >
@@ -253,7 +253,7 @@ export default function GalleryContainer({
           {renderPagination()}
           
           <button 
-            className="gallery-pagination-item"
+            className="gallery-pagination-item custom-cursor-click"
             onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
           >

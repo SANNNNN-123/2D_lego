@@ -169,7 +169,7 @@
   border: 2px solid #000;
   font-family: var(--font-press-start-2p);
   font-size: 14px;
-  cursor: pointer;
+  cursor: url('/cursor-click.png'), pointer;
   background-color: white;
 }
 

@@ -18,10 +18,10 @@ export default function GalleryPage() {
           </div>
           
           <div className="flex justify-between items-center mb-8">
-            <Link href="/" className="nes-btn is-primary">
+            <Link href="/" className="nes-btn is-primary custom-cursor-click">
               Back to Home
             </Link>
-            <Link href="/builder" className="nes-btn is-success">
+            <Link href="/builder" className="nes-btn is-success custom-cursor-click">
               Create New Design
             </Link>
           </div>

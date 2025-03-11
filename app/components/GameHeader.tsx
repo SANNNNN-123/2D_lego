@@ -67,7 +67,6 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit, captureDesig
         });
         
         if (result.success) {
-          alert('Design saved successfully!');
           setIsDialogOpen(false);
         } else {
           // Safely access error message if it exists

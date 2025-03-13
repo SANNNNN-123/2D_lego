@@ -138,6 +138,13 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit, captureDesig
     <div className="w-full mb-8 custom-cursor">
       <div className="flex justify-between items-center mb-4 px-4">
         <div className="flex gap-2">
+          {/* Hidden dummy button to absorb any automatic clicks */}
+          <button 
+            className="nes-btn custom-cursor-click dummy-button"
+            aria-hidden="true"
+            tabIndex={-1}
+          ></button>
+          
           <button className="nes-btn custom-cursor-click" onClick={handleExportClick}>
             EXPORT
           </button>
@@ -170,6 +177,21 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit, captureDesig
         onClose={() => setIsExportDialogOpen(false)}
         designData={designData}
       />
+      
+      {/* Add styling for the dummy button */}
+      <style jsx>{`
+        .dummy-button {
+          width: 0;
+          height: 0;
+          padding: 0 !important;
+          margin: 0 !important;
+          border: none !important;
+          overflow: hidden;
+          position: absolute;
+          opacity: 0;
+          pointer-events: auto; /* Still capture clicks */
+        }
+      `}</style>
     </div>
   );
 };

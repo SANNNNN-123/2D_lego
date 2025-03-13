@@ -313,8 +313,10 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
           <div className="mt-2 nes-container" style={{ height: '280px', width: '100%', padding: '0 !important', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
             {isLoading ? (
               <div style={{ width: '80%', textAlign: 'center' }}>
-                <p className="nes-text">Generating image... {progress}%</p>
-                <progress className="nes-progress is-success" value={progress} max="100"></progress>
+                <div className="nes-text" style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ margin: '0 8px' }}>Generating image... {progress}%</span>
+                </div>
+                <progress className="nes-progress is-success" value={progress} max="100" style={{ width: '100%' }}></progress>
               </div>
             ) : imageSrc ? (
               <>

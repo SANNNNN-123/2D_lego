@@ -273,4 +273,85 @@
       margin: 0 -24px;
     }
   }
+}
+
+/* Ensure progress bars have the proper pixelated look */
+.nes-progress {
+  -webkit-appearance: none;
+  appearance: none;
+  border-image-repeat: stretch !important;
+  border: 4px solid #000 !important;
+  border-radius: 0 !important;
+  height: 24px !important;
+  margin: 8px 0 !important;
+  background-color: #fff !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.nes-progress::-webkit-progress-bar {
+  background-color: #fff !important;
+}
+
+.nes-progress::-webkit-progress-value {
+  background-color: #92cc41 !important;
+  position: relative;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  ) !important;
+  background-size: 8px 8px !important;
+}
+
+.nes-progress.is-success::-webkit-progress-value {
+  background-color: #92cc41 !important;
+}
+
+.nes-progress.is-warning::-webkit-progress-value {
+  background-color: #f7d51d !important;
+}
+
+.nes-progress.is-error::-webkit-progress-value {
+  background-color: #e76e55 !important;
+}
+
+.nes-progress.is-primary::-webkit-progress-value {
+  background-color: #209cee !important;
+}
+
+.nes-progress::-moz-progress-bar {
+  background-color: #92cc41 !important;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  ) !important;
+  background-size: 8px 8px !important;
+}
+
+.nes-progress.is-success::-moz-progress-bar {
+  background-color: #92cc41 !important;
+}
+
+.nes-progress.is-warning::-moz-progress-bar {
+  background-color: #f7d51d !important;
+}
+
+.nes-progress.is-error::-moz-progress-bar {
+  background-color: #e76e55 !important;
+}
+
+.nes-progress.is-primary::-moz-progress-bar {
+  background-color: #209cee !important;
 } 

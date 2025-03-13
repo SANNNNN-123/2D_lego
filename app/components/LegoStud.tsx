@@ -42,7 +42,9 @@ const LegoStud: React.FC<LegoStudProps> = ({
           inset 0 2px 3px rgba(255, 255, 255, 0.4),
           0 2px 2px rgba(0, 0, 0, 0.3)
         `,
-        background: `${color} radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%)`,
+        background: color.startsWith('rgba') 
+          ? `${color}` 
+          : `${color} radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%)`,
       }
     : {
         ...baseStyle,
@@ -51,7 +53,9 @@ const LegoStud: React.FC<LegoStudProps> = ({
           inset 0 2px 3px rgba(255, 255, 255, 0.4),
           0 2px 2px rgba(0, 0, 0, 0.3)
         `,
-        background: `${color} radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%)`,
+        background: color.startsWith('rgba') 
+          ? `${color}` 
+          : `${color} radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%)`,
       };
 
   return (

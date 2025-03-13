@@ -23,7 +23,11 @@ export const COLORS = [
   '#F0E68C', // Khaki
 ] as const;
 
-export type PieceColor = typeof COLORS[number];
+// Define the base color type from the COLORS array
+export type BaseColor = typeof COLORS[number];
+
+// Extend PieceColor to allow for both hex colors and string-based rgba colors
+export type PieceColor = BaseColor | string;
 
 export const PIECE_SIZES: PieceSize[] = [
   [1, 1],

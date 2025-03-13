@@ -100,13 +100,22 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
     selectedDesign.pixelData.forEach((row, y) => {
       row.forEach((color, x) => {
         if (color) {
-          // Create a new piece for each colored pixel
+          // Convert the hex color to rgba with 0.11 opacity
+          const hexColor = color;
+          // Parse the hex color to RGB
+          const r = parseInt(hexColor.slice(1, 3), 16);
+          const g = parseInt(hexColor.slice(3, 5), 16);
+          const b = parseInt(hexColor.slice(5, 7), 16);
+          // Create semi-transparent color
+          const semiTransparentColor = `rgba(${r}, ${g}, ${b}, 0.11)`;
+          
+          // Create a new piece for each colored pixel with semi-transparency
           const newPiece: LegoPiece = {
             id: `traced-piece-${x}-${y}-${Date.now()}`,
             type: 'Plate',
             size: [1, 1],
             position: [x, y],
-            color: color as PieceColor,
+            color: semiTransparentColor,
           };
           
           piecesToPlace.push(newPiece);

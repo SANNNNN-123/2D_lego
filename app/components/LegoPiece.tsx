@@ -12,6 +12,7 @@ const LegoPiece: React.FC<LegoPieceProps> = ({ piece }) => {
   
   return (
     <div
+      className="custom-cursor-click"
       style={{
         position: "absolute",
         width: `${width * 24}px`,
@@ -27,6 +28,7 @@ const LegoPiece: React.FC<LegoPieceProps> = ({ piece }) => {
           linear-gradient(to bottom, rgba(128,128,128,0.2) 1px, transparent 1px)
         `,
         backgroundSize: "24px 24px",
+        cursor: "url('/cursor-click.png'), pointer",
       }}
     >
       {/* Render studs on the piece if it's a plate */}
@@ -40,6 +42,7 @@ const LegoPiece: React.FC<LegoPieceProps> = ({ piece }) => {
             y={studY}
             color={piece.color}
             isOnPiece={true}
+            isClickable={true}
           />
         );
       })}

@@ -16,8 +16,55 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>('#FF0000');
   const [isDragging, setIsDragging] = useState(false);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
+  const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const lastPlacedPosition = useRef<{ x: number; y: number } | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
+  const tracedPiecesRef = useRef<Set<string>>(new Set()); // Store traced piece positions
+
+  // Helper function to check if a piece color is semi-transparent
+  const isSemiTransparent = (color: string): boolean => {
+    if (typeof color === 'string' && color.startsWith('rgba')) {
+      const opacityMatch = color.match(/rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([\d.]+)\s*\)/);
+      const opacity = opacityMatch && opacityMatch[1] ? parseFloat(opacityMatch[1]) : 1;
+      return opacity <= 0.11;
+    }
+    return false;
+  };
+
+  // Check if all traced pieces are covered by regular pieces
+  const checkCompletion = () => {
+    // If there are no traced pieces, no need to check
+    if (tracedPiecesRef.current.size === 0) {
+      return;
+    }
+
+    // Get all positions covered by regular pieces
+    const coveredPositions = new Set<string>();
+    pieces.forEach(piece => {
+      if (!isSemiTransparent(piece.color)) {
+        const [x, y] = piece.position;
+        coveredPositions.add(`${x},${y}`);
+      }
+    });
+
+    // Check if all traced positions are covered
+    let allCovered = true;
+    tracedPiecesRef.current.forEach(posKey => {
+      if (!coveredPositions.has(posKey)) {
+        allCovered = false;
+      }
+    });
+
+    // Show completion message if all traced pieces are covered
+    if (allCovered && tracedPiecesRef.current.size > 0) {
+      setShowCompletionMessage(true);
+    }
+  };
+
+  // Run completion check whenever pieces change
+  useEffect(() => {
+    checkCompletion();
+  }, [pieces]);
 
   // Add keyboard event listener for 'C' key
   // useEffect(() => {
@@ -36,18 +83,42 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const handleClearBoard = () => {
     setPieces([]);
     setShowClearConfirmation(false);
+    setShowCompletionMessage(false);
+    tracedPiecesRef.current.clear();
   };
 
   const handleClick = (x: number, y: number) => {
     if (selectedColor === null) {
       // Eraser mode - remove piece at clicked position
-      erasePieceAt(x, y);
+      // Only erase non-transparent pieces first, if none found, then erase transparent ones
+      const hasNonTransparentPiece = pieces.some(piece => {
+        const [pieceX, pieceY] = piece.position;
+        const [pieceWidth, pieceHeight] = piece.size;
+        const isWithinBounds = x >= pieceX && 
+                              x < pieceX + pieceWidth && 
+                              y >= pieceY && 
+                              y < pieceY + pieceHeight;
+        
+        if (isWithinBounds) {
+          // Check if it's a non-transparent piece
+          return !isSemiTransparent(piece.color);
+        }
+        return false;
+      });
+      
+      if (hasNonTransparentPiece) {
+        // Erase only non-transparent pieces
+        erasePieceAt(x, y, false);
+      } else {
+        // If no non-transparent pieces, erase transparent ones
+        erasePieceAt(x, y, true);
+      }
     } else {
       placePieceAt(x, y);
     }
   };
 
-  const erasePieceAt = (x: number, y: number) => {
+  const erasePieceAt = (x: number, y: number, eraseTransparent = false) => {
     // Don't erase if it's the same position as last erased piece during drag
     if (lastPlacedPosition.current?.x === x && lastPlacedPosition.current?.y === y) {
       return;
@@ -63,14 +134,27 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
     });
 
     if (isOccupied) {
-      // Simply remove any pieces at this position without replacing them
+      // Remove pieces at this position based on transparency
       const newPieces = pieces.filter(piece => {
         const [pieceX, pieceY] = piece.position;
         const [pieceWidth, pieceHeight] = piece.size;
-        return !(x >= pieceX && 
-                x < pieceX + pieceWidth && 
-                y >= pieceY && 
-                y < pieceY + pieceHeight);
+        const isWithinBounds = x >= pieceX && 
+                              x < pieceX + pieceWidth && 
+                              y >= pieceY && 
+                              y < pieceY + pieceHeight;
+        
+        if (isWithinBounds) {
+          // Check if it's a transparent piece
+          const isTransparent = isSemiTransparent(piece.color);
+          
+          // Keep transparent pieces unless eraseTransparent is true
+          if (isTransparent) {
+            return !eraseTransparent;
+          }
+          // Remove non-transparent pieces
+          return eraseTransparent;
+        }
+        return true; // Keep pieces not at this position
       });
       
       setPieces(newPieces);
@@ -93,24 +177,46 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
       color: selectedColor as PieceColor,
     };
     
-    // Check if position is already occupied
-    const isOccupied = pieces.some(piece => {
+    // Check if position is already occupied by a non-transparent piece
+    const isOccupiedByNonTransparent = pieces.some(piece => {
       const [pieceX, pieceY] = piece.position;
       const [pieceWidth, pieceHeight] = piece.size;
-      return x >= pieceX && 
-             x < pieceX + pieceWidth && 
-             y >= pieceY && 
-             y < pieceY + pieceHeight;
+      
+      // Check if the position is within this piece's bounds
+      const isWithinBounds = x >= pieceX && 
+                            x < pieceX + pieceWidth && 
+                            y >= pieceY && 
+                            y < pieceY + pieceHeight;
+      
+      // If within bounds, check if the piece is semi-transparent (traced)
+      if (isWithinBounds) {
+        // If the piece is semi-transparent, consider it not occupied
+        return !isSemiTransparent(piece.color);
+      }
+      return false; // Not within bounds
     });
 
-    // Remove any existing pieces at this position
+    // If occupied by a non-transparent piece, don't place a new piece
+    if (isOccupiedByNonTransparent) {
+      return;
+    }
+
+    // Remove any existing semi-transparent pieces at this position
     const filteredPieces = pieces.filter(piece => {
       const [pieceX, pieceY] = piece.position;
       const [pieceWidth, pieceHeight] = piece.size;
-      return !(x >= pieceX && 
-              x < pieceX + pieceWidth && 
-              y >= pieceY && 
-              y < pieceY + pieceHeight);
+      
+      // Check if the position is within this piece's bounds
+      const isWithinBounds = x >= pieceX && 
+                            x < pieceX + pieceWidth && 
+                            y >= pieceY && 
+                            y < pieceY + pieceHeight;
+      
+      if (isWithinBounds) {
+        // Always remove traced pieces at this position
+        return !isSemiTransparent(piece.color);
+      }
+      return true; // Keep all other pieces
     });
 
     // Add the new piece
@@ -131,10 +237,28 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const handleMouseMove = (x: number, y: number) => {
     if (isDragging) {
       if (selectedColor === null) {
-        // In eraser mode, erase any piece we touch
-        erasePieceAt(x, y);
+        // In eraser mode, prioritize erasing non-transparent pieces
+        const hasNonTransparentPiece = pieces.some(piece => {
+          const [pieceX, pieceY] = piece.position;
+          const [pieceWidth, pieceHeight] = piece.size;
+          const isWithinBounds = x >= pieceX && 
+                                x < pieceX + pieceWidth && 
+                                y >= pieceY && 
+                                y < pieceY + pieceHeight;
+          
+          if (isWithinBounds) {
+            // Check if it's a non-transparent piece
+            return !isSemiTransparent(piece.color);
+          }
+          return false;
+        });
+        
+        if (hasNonTransparentPiece) {
+          // Erase only non-transparent pieces
+          erasePieceAt(x, y, false);
+        }
       } else {
-        // In color mode, place pieces in empty spots
+        // In color mode, place pieces in empty spots or on top of transparent pieces
         placePieceAt(x, y);
       }
     }
@@ -211,6 +335,14 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   const handleTrace = (tracedPieces: LegoPiece[]) => {
     // Clear the board first
     setPieces([]);
+    setShowCompletionMessage(false);
+    
+    // Store traced piece positions for completion check
+    tracedPiecesRef.current.clear();
+    tracedPieces.forEach(piece => {
+      const [x, y] = piece.position;
+      tracedPiecesRef.current.add(`${x},${y}`);
+    });
     
     // Add a small delay before placing the traced pieces
     setTimeout(() => {
@@ -245,6 +377,25 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                 style={{ margin: '0' }}
               >
                 Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Completion Message Dialog */}
+      {showCompletionMessage && (
+        <div className="nes-dialog-overlay">
+          <div className="nes-container is-rounded with-title" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', maxWidth: '300px', margin: '0', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
+            <p className="title" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>Congratulations!</p>
+            <p className="nes-text mb-4" style={{ fontSize: '10px' }}>You have completed the design!</p>
+            <div className="flex justify-center">
+              <button 
+                className="nes-btn is-success custom-cursor-click"
+                onClick={() => setShowCompletionMessage(false)}
+                style={{ margin: '0' }}
+              >
+                Continue
               </button>
             </div>
           </div>
@@ -286,10 +437,19 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
             const isOccupied = pieces.some(piece => {
               const [pieceX, pieceY] = piece.position;
               const [pieceWidth, pieceHeight] = piece.size;
-              return x >= pieceX && 
+              
+              // Check if the position is within this piece's bounds
+              const isWithinBounds = x >= pieceX && 
                      x < pieceX + pieceWidth && 
                      y >= pieceY && 
                      y < pieceY + pieceHeight;
+              
+              // If within bounds, check if it's a non-transparent piece
+              if (isWithinBounds) {
+                // If the piece is semi-transparent, consider it not occupied
+                return !isSemiTransparent(piece.color);
+              }
+              return false; // Not within bounds
             });
 
             return (
@@ -304,7 +464,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                   cursor: 'pointer',
                   backgroundColor: 'transparent',
                   transition: 'background-color 0.1s ease',
-                  zIndex: 0,
+                  zIndex: 4, // Higher than traced pieces (1) and regular pieces (2), but lower than studs (5)
                 }}
                 onMouseEnter={(e) => {
                   // Always show hover effect since we can place or erase anywhere
@@ -327,60 +487,84 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
           })}
 
           {/* Render all pieces */}
-          {pieces.map((piece) => (
-            <div
-              key={piece.id}
-              style={{
-                position: 'absolute',
-                width: `${piece.size[0] * 24}px`,
-                height: `${piece.size[1] * 24}px`,
-                backgroundColor: piece.color,
-                top: `${piece.position[1] * 24}px`,
-                left: `${piece.position[0] * 24}px`,
-                zIndex: 2,
-                borderRadius: '2px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                backgroundImage: `
-                  linear-gradient(to right, rgba(128,128,128,0.2) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(128,128,128,0.2) 1px, transparent 1px)
-                `,
-                backgroundSize: '24px 24px',
-                cursor: selectedColor === null ? 'pointer' : 'default', // Show pointer cursor in eraser mode
-              }}
-              onMouseDown={(e) => {
-                if (selectedColor === null) {
-                  // In eraser mode, erase this piece
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleMouseDown();
-                  // Erase the entire piece at once by removing it from the pieces array
-                  setPieces(pieces.filter(p => p.id !== piece.id));
-                  lastPlacedPosition.current = { x: piece.position[0], y: piece.position[1] };
-                }
-              }}
-              onMouseEnter={(e) => {
-                if (isDragging && selectedColor === null) {
-                  // If dragging in eraser mode, erase this piece
-                  setPieces(pieces.filter(p => p.id !== piece.id));
-                  lastPlacedPosition.current = { x: piece.position[0], y: piece.position[1] };
-                }
-              }}
-            >
-              {piece.type === 'Plate' && Array.from({ length: piece.size[0] * piece.size[1] }).map((_, i) => {
-                const studY = Math.floor(i / piece.size[0]);
-                const studX = i % piece.size[0];
-                return (
-                  <LegoStud
-                    key={`stud-${i}`}
-                    x={studX}
-                    y={studY}
-                    color={piece.color}
-                    isOnPiece={true}
-                  />
-                );
-              })}
-            </div>
-          ))}
+          {pieces.map((piece) => {
+            // Determine if this is a semi-transparent traced piece
+            const isTracedPiece = isSemiTransparent(piece.color);
+            
+            return (
+              <div
+                key={piece.id}
+                style={{
+                  position: 'absolute',
+                  width: `${piece.size[0] * 24}px`,
+                  height: `${piece.size[1] * 24}px`,
+                  backgroundColor: piece.color,
+                  top: `${piece.position[1] * 24}px`,
+                  left: `${piece.position[0] * 24}px`,
+                  // Set lower z-index for traced pieces, higher for regular pieces
+                  zIndex: isTracedPiece ? 1 : 2,
+                  borderRadius: '2px',
+                  boxShadow: isTracedPiece ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
+                  backgroundImage: `
+                    linear-gradient(to right, rgba(128,128,128,0.2) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(128,128,128,0.2) 1px, transparent 1px)
+                  `,
+                  backgroundSize: '24px 24px',
+                  cursor: selectedColor === null ? 'pointer' : 'default', // Show pointer cursor in eraser mode
+                  pointerEvents: isTracedPiece ? 'none' : 'auto', // Disable pointer events for traced pieces
+                }}
+                onMouseDown={(e) => {
+                  if (selectedColor === null) {
+                    // In eraser mode, erase this piece
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMouseDown();
+                    
+                    // Check if it's a semi-transparent piece
+                    const isTransparent = isSemiTransparent(piece.color);
+                    
+                    if (isTransparent) {
+                      // Only skip erasing if it's a low opacity piece
+                      return;
+                    }
+                    
+                    // Erase the entire piece at once by removing it from the pieces array
+                    setPieces(pieces.filter(p => p.id !== piece.id));
+                    lastPlacedPosition.current = { x: piece.position[0], y: piece.position[1] };
+                  }
+                }}
+                onMouseEnter={(e) => {
+                  if (isDragging && selectedColor === null) {
+                    // Check if it's a semi-transparent piece
+                    const isTransparent = isSemiTransparent(piece.color);
+                    
+                    if (isTransparent) {
+                      // Only skip erasing if it's a low opacity piece
+                      return;
+                    }
+                    
+                    // If dragging in eraser mode, erase this piece if it's not transparent
+                    setPieces(pieces.filter(p => p.id !== piece.id));
+                    lastPlacedPosition.current = { x: piece.position[0], y: piece.position[1] };
+                  }
+                }}
+              >
+                {piece.type === 'Plate' && !isTracedPiece && Array.from({ length: piece.size[0] * piece.size[1] }).map((_, i) => {
+                  const studY = Math.floor(i / piece.size[0]);
+                  const studX = i % piece.size[0];
+                  return (
+                    <LegoStud
+                      key={`stud-${i}`}
+                      x={studX}
+                      y={studY}
+                      color={piece.color}
+                      isOnPiece={true}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
 
           {/* Base studs */}
           {Array.from({ length: width * height }).map((_, i) => {
@@ -389,10 +573,19 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
             const isOccupied = pieces.some(piece => {
               const [pieceX, pieceY] = piece.position;
               const [pieceWidth, pieceHeight] = piece.size;
-              return x >= pieceX && 
+              
+              // Check if the position is within this piece's bounds
+              const isWithinBounds = x >= pieceX && 
                      x < pieceX + pieceWidth && 
                      y >= pieceY && 
                      y < pieceY + pieceHeight;
+              
+              // If within bounds, check if it's a non-transparent piece
+              if (isWithinBounds) {
+                // If the piece is semi-transparent, consider it not occupied
+                return !isSemiTransparent(piece.color);
+              }
+              return false; // Not within bounds
             });
             
             return (

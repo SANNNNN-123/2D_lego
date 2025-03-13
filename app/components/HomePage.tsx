@@ -45,7 +45,7 @@ export function HeroSection() {
           <span className="nes-icon coin is-small"></span>
           <span id="design-counter">Loading designs...</span>
         </div>
-        <div className="flex justify-center space-x-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-4 mb-8 px-2">
           <i className="nes-ash"></i>
           <i className="nes-pokeball"></i>
           <i className="nes-bulbasaur"></i>
@@ -54,14 +54,16 @@ export function HeroSection() {
           <i className="nes-kirby"></i>
         </div>
         <h1 
-          className="text-4xl md:text-4xl font-bold mb-8 animate-fadeIn" 
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 animate-fadeIn" 
           style={{ 
             fontFamily: 'var(--font-press-start-2p)', 
             marginBottom: '2rem', 
             marginTop: 0,
             textShadow: '2px 2px 0px rgba(0,0,0,0.1)',
-            fontSize: '80px',
-            lineHeight: '1'
+            fontSize: 'clamp(40px, 10vw, 80px)',
+            lineHeight: '1.2',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word'
           }}
         >
           Build Anything You Imagine
@@ -70,11 +72,12 @@ export function HeroSection() {
           className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12" 
           style={{ 
             fontFamily: 'var(--font-press-start-2p)', 
-            fontSize: '12px',
-            lineHeight: '1.8'
+            fontSize: 'clamp(8px, 2vw, 12px)',
+            lineHeight: '1.8',
+            padding: '0 10px'
           }}
         >
-          Create, design, and share your LEGO masterpieces with our intuitive 2D LEGO builder. No physical limitations,
+          Create and design your LEGO masterpieces with our intuitive 2D LEGO builder. No physical limitations,
           just pure creativity.
         </p>
         <Link

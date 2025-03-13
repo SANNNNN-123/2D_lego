@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Pixelify } from 'react-pixelify';
 
 interface ImagePromptProps {
@@ -13,6 +13,9 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
   const [pixelated, setPixelated] = useState(false);
   const [gridSize, setGridSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [pixelData, setPixelData] = useState<Array<{x: number, y: number, color: string}>>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Get pixel size based on selected grid size
   const getPixelSize = () => {
@@ -23,12 +26,17 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
     }
   };
 
-  // Reset image loaded state when toggling pixelation off
-  useEffect(() => {
-    if (!pixelated) {
-      setImageLoaded(false);
+  // Handle pixelation toggle
+  const handlePixelatedToggle = () => {
+    // If turning on pixelation, ensure imageLoaded is true if we have an image
+    if (!pixelated && imageSrc) {
+      setImageLoaded(true);
+      if (imageSrc && imageLoaded) {
+        generatePixelData();
+      }
     }
-  }, [pixelated]);
+    setPixelated(!pixelated);
+  };
 
   // Set image as loaded when image source changes
   useEffect(() => {
@@ -37,9 +45,97 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
       img.src = imageSrc;
       img.onload = () => {
         setImageLoaded(true);
+        if (pixelated) {
+          generatePixelData();
+        }
       };
     }
   }, [imageSrc]);
+
+  // Update pixel data when grid size changes
+  useEffect(() => {
+    if (pixelated && imageSrc && imageLoaded) {
+      generatePixelData();
+    }
+  }, [gridSize, pixelated]);
+
+  // Generate pixel data from the image
+  const generatePixelData = () => {
+    if (!imageSrc || !imageLoaded) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const pixelSize = getPixelSize();
+    const width = 260;
+    const height = 220;
+    
+    // Set canvas dimensions
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw image to canvas
+    const img = new Image();
+    img.src = imageSrc;
+    
+    // Center the image in the canvas
+    const aspectRatio = img.width / img.height;
+    let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+    
+    if (aspectRatio > width / height) {
+      // Image is wider than canvas
+      drawWidth = width;
+      drawHeight = width / aspectRatio;
+      offsetY = (height - drawHeight) / 2;
+    } else {
+      // Image is taller than canvas
+      drawHeight = height;
+      drawWidth = height * aspectRatio;
+      offsetX = (width - drawWidth) / 2;
+    }
+    
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+    
+    // Get image data
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    
+    // Create pixelated data
+    const pixels: Array<{x: number, y: number, color: string}> = [];
+    
+    // Process pixels in blocks of pixelSize
+    for (let y = 0; y < height; y += pixelSize) {
+      for (let x = 0; x < width; x += pixelSize) {
+        // Sample the center of each pixel block
+        const centerX = Math.min(x + Math.floor(pixelSize / 2), width - 1);
+        const centerY = Math.min(y + Math.floor(pixelSize / 2), height - 1);
+        
+        const index = (centerY * width + centerX) * 4;
+        const r = data[index];
+        const g = data[index + 1];
+        const b = data[index + 2];
+        const a = data[index + 3];
+        
+        // Skip fully transparent pixels
+        if (a < 10) continue;
+        
+        // Add pixel data
+        pixels.push({
+          x,
+          y,
+          color: `rgba(${r}, ${g}, ${b}, ${a / 255})`
+        });
+      }
+    }
+    
+    setPixelData(pixels);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +145,7 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
     setProgress(0);
     setPixelated(false);
     setImageLoaded(false);
+    setPixelData([]);
     
     // Start progress simulation
     const progressInterval = setInterval(() => {
@@ -83,9 +180,117 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
     }
   };
 
+  // Custom pixelated view with perfectly aligned grid
+  const PixelatedView = () => {
+    const pixelSize = getPixelSize();
+    const width = 260;
+    const height = 220;
+    
+    // Calculate grid dimensions
+    const rows = Math.ceil(height / pixelSize);
+    const cols = Math.ceil(width / pixelSize);
+    
+    // Grid line properties
+    const gridColor = "rgba(0, 0, 0, 0.3)";
+    const gridThickness = 2; // Increased thickness
+    
+    return (
+      <div 
+        ref={containerRef}
+        style={{ 
+          position: 'relative',
+          width: `${width}px`,
+          height: `${height}px`,
+          backgroundColor: 'white'
+        }}
+      >
+        {/* Hidden canvas for processing */}
+        <canvas 
+          ref={canvasRef} 
+          style={{ display: 'none' }} 
+        />
+        
+        {/* Render each pixel as a div */}
+        {pixelData.map((pixel, index) => (
+          <div
+            key={`pixel-${index}`}
+            style={{
+              position: 'absolute',
+              left: `${pixel.x}px`,
+              top: `${pixel.y}px`,
+              width: `${pixelSize}px`,
+              height: `${pixelSize}px`,
+              backgroundColor: pixel.color
+            }}
+          />
+        ))}
+        
+        {/* Grid overlay */}
+        <div 
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 10
+          }}
+        >
+          {/* Grid pattern */}
+          <svg 
+            width="100%" 
+            height="100%" 
+            xmlns="http://www.w3.org/2000/svg"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0
+            }}
+          >
+            <defs>
+              <pattern 
+                id="grid" 
+                width={pixelSize} 
+                height={pixelSize} 
+                patternUnits="userSpaceOnUse"
+              >
+                <path 
+                  d={`M ${pixelSize} 0 L 0 0 0 ${pixelSize}`} 
+                  fill="none" 
+                  stroke={gridColor} 
+                  strokeWidth={gridThickness}
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+          
+          {/* Right and bottom borders */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: `${gridThickness}px`,
+            height: '100%',
+            backgroundColor: gridColor
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            height: `${gridThickness}px`,
+            backgroundColor: gridColor
+          }} />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
-      <h3 className="nes-text mb-2">Enter Image Prompt</h3>
+      <h3 className="nes-text mb-2"></h3>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -116,40 +321,26 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
                   <div style={{ 
                     width: '100%', 
                     height: '100%', 
-                    display: imageLoaded ? 'block' : 'none',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'center', 
-                      alignItems: 'center',
-                      height: '100%'
-                    }}>
-                      <Pixelify
-                        src={imageSrc}
-                        pixelSize={getPixelSize()}
-                        width={260}
-                        height={220}
-                        centered={true}
-                        fillTransparencyColor="white"
-                        styled={true}
-                      />
-                    </div>
+                    <PixelatedView />
                   </div>
-                ) : null}
-                
-                <img 
-                  src={imageSrc} 
-                  alt="Generated from prompt" 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'contain',
-                    padding: '10px',
-                    display: (!pixelated || !imageLoaded) ? 'block' : 'none'
-                  }}
-                />
+                ) : (
+                  <img 
+                    src={imageSrc} 
+                    alt="Generated from prompt" 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'contain',
+                      padding: '10px'
+                    }}
+                  />
+                )}
               </>
             ) : (
               <div className="nes-text" style={{ padding: '20px' }}>
@@ -163,9 +354,13 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
                 type="checkbox" 
                 className="nes-checkbox mr-2" 
                 checked={pixelated} 
-                onChange={() => setPixelated(!pixelated)}
+                onChange={handlePixelatedToggle}
+                disabled={!imageSrc || isLoading}
               />
-              <span className="nes-text" style={{ fontSize: '1rem' }}>Pixelated</span>
+              <span className="nes-text" style={{ 
+                fontSize: '1rem',
+                opacity: (!imageSrc || isLoading) ? 0.5 : 1
+              }}>Pixelated</span>
             </label>
             
             <div style={{ display: 'inline-block' }}>
@@ -173,7 +368,7 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
                 className="nes-text"
                 value={gridSize}
                 onChange={(e) => setGridSize(e.target.value as 'small' | 'medium' | 'large')}
-                disabled={!pixelated}
+                disabled={!pixelated || !imageSrc}
                 style={{ 
                   fontSize: '1rem',
                   border: '2px solid #000',
@@ -186,7 +381,7 @@ const ImagePrompt: React.FC<ImagePromptProps> = ({ onSubmit }) => {
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'right 2px center',
                   paddingRight: '20px',
-                  opacity: pixelated ? 1 : 0.5
+                  opacity: (pixelated && imageSrc) ? 1 : 0.5
                 }}
               >
                 <option value="small">Small</option>

@@ -144,8 +144,8 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
           backgroundColor: color,
           width: '24px',
           height: '24px',
-          borderRadius: '4px',
-          border: '2px solid #000',
+          borderRadius: '2px',
+          border: '1px solid #000',
           position: 'relative',
           overflow: 'hidden'
         }}

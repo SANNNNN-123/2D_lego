@@ -233,4 +233,44 @@
   border-color: black !important;
   font-size: 14px !important;
   padding: 8px 16px !important;
+}
+
+/* Mobile-friendly NES icons */
+@media (max-width: 768px) {
+  /* Container for NES icons */
+  .nes-icons-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0 !important;
+    overflow-x: auto;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* Hide scrollbar */
+  .nes-icons-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Make NES icons smaller on mobile */
+  .nes-icons-container i {
+    transform: scale(0.55);
+    margin: 0 -24px;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+  
+  /* Even smaller on very small screens */
+  @media (max-width: 375px) {
+    .nes-icons-container i {
+      transform: scale(0.55);
+      margin: 0 -24px;
+    }
+  }
 } 

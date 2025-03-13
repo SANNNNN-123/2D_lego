@@ -45,7 +45,7 @@ export function HeroSection() {
           <span className="nes-icon coin is-small"></span>
           <span id="design-counter">Loading designs...</span>
         </div>
-        <div className="flex flex-wrap justify-center gap-4 mb-8 px-2">
+        <div className="flex flex-wrap justify-center gap-4 mb-8 px-2 nes-icons-container">
           <i className="nes-ash"></i>
           <i className="nes-pokeball"></i>
           <i className="nes-bulbasaur"></i>
@@ -77,8 +77,7 @@ export function HeroSection() {
             padding: '0 10px'
           }}
         >
-          Create and design your LEGO masterpieces with our intuitive 2D LEGO builder. No physical limitations,
-          just pure creativity.
+          Unleash your creativity with 2D LEGO—no limits, just imagination.
         </p>
         <Link
           href="/builder"

@@ -56,8 +56,12 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
           style={{
             width: '32px',
             height: '32px',
-            border: selectedColor !== null && selectedColor.startsWith('#') && !colors.includes(selectedColor) ? '3px solid black' : '1px solid #ccc',
+            border: selectedColor !== null && selectedColor.startsWith('#') && !colors.includes(selectedColor) ? '2px solid black' : '1px solid #ccc',
             overflow: 'hidden',
+            borderRadius: '50%',
+            backgroundImage: 'url("/color-wheel.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
           }}
         >
           <input 
@@ -71,6 +75,7 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
               top: '-5px',
               left: '-5px',
               cursor: 'url("/cursor-click.png"), pointer',
+              opacity: 0
             }}
           />
         </div>

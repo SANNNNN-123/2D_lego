@@ -10,19 +10,22 @@ interface LearnDesignPreviewProps {
   designName?: string;
   creatorName?: string;
   onTrace?: (pieces: LegoPiece[]) => void;
+  onColorSelect?: (color: string | null) => void;
 }
 
 const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({ 
   pixelData, 
   designName = 'Untitled Design',
   creatorName = 'Anonymous',
-  onTrace
+  onTrace,
+  onColorSelect
 }) => {
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const { selectedDesign } = useDesign();
   const [isTracing, setIsTracing] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   
   // Calculate the dimensions of the design
   const designWidth = pixelData && pixelData[0] ? pixelData[0].length * 24 : 0;
@@ -134,20 +137,34 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
     }, 100);
   };
   
+  // Handle color selection
+  const handleColorSelect = (color: string) => {
+    setSelectedColor(color);
+    if (onColorSelect) {
+      onColorSelect(color);
+    }
+  };
+  
   // Render a color swatch for the color palette
   const renderColorSwatch = (color: string) => {
+    const isSelected = selectedColor === color;
+    
     return (
       <div 
         key={color}
-        className="color-swatch"
+        className={`color-swatch ${isSelected ? 'selected' : ''}`}
+        onClick={() => handleColorSelect(color)}
         style={{ 
           backgroundColor: color,
           width: '24px',
           height: '24px',
           borderRadius: '2px',
-          border: '1px solid #000',
+          border: isSelected ? '3px solid #000' : '1px solid #000',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          cursor: 'pointer',
+          boxShadow: isSelected ? '0 2px 4px rgba(0,0,0,0.3)' : 'none',
+          transition: 'all 0.2s ease'
         }}
       >
         <div 
@@ -184,21 +201,23 @@ const LearnDesignPreview: React.FC<LearnDesignPreviewProps> = ({
         <div className="mb-2 p-2" style={{ border: '2px solid #000', borderRadius: '4px' }}>
           <div className="flex justify-between items-center mb-2">
             <p style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px', margin: '0' }}>Colors</p>
-            <button
-              className={`nes-btn ${isTracing ? 'is-success' : 'is-primary'}`}
-              onClick={handleTrace}
-              style={{ 
-                fontFamily: 'var(--font-press-start-2p)', 
-                fontSize: '10px',
-                padding: '2px 8px',
-                height: 'auto',
-                margin: '0',
-                backgroundColor: isTracing ? '#92cc41' : '#209cee',
-                color: 'white'
-              }}
-            >
-              {isTracing ? 'Tracing...' : 'Trace'}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                className={`nes-btn ${isTracing ? 'is-success' : 'is-primary'}`}
+                onClick={handleTrace}
+                style={{ 
+                  fontFamily: 'var(--font-press-start-2p)', 
+                  fontSize: '10px',
+                  padding: '2px 8px',
+                  height: 'auto',
+                  margin: '0',
+                  backgroundColor: isTracing ? '#92cc41' : '#209cee',
+                  color: 'white'
+                }}
+              >
+                {isTracing ? 'Tracing...' : 'Trace'}
+              </button>
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {selectedDesign.colorPalette.map(color => renderColorSwatch(color))}

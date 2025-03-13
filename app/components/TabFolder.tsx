@@ -9,9 +9,10 @@ import { LegoPiece } from '../types';
 interface TabFolderProps {
   onImagePromptSubmit?: (prompt: string) => void;
   onTrace?: (pieces: LegoPiece[]) => void;
+  onColorSelect?: (color: string | null) => void;
 }
 
-const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace }) => {
+const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace, onColorSelect }) => {
   const [activeTab, setActiveTab] = useState<'imageGen' | 'learnDesign'>('imageGen');
   const { selectedDesign } = useDesign();
   
@@ -62,6 +63,7 @@ const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace }) =
               designName={selectedDesign?.name}
               creatorName={selectedDesign?.creator}
               onTrace={onTrace}
+              onColorSelect={onColorSelect}
             />
           </div>
         )}

@@ -409,6 +409,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
             // console.log("Image prompt submitted:", prompt);
           }} 
           onTrace={handleTrace}
+          onColorSelect={setSelectedColor}
         />
 
         <div

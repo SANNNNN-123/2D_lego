@@ -24,7 +24,7 @@ const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace, onC
   }, [selectedDesign]);
 
   return (
-    <div className="nes-container" style={{ width: '360px', padding: '0' }}>
+    <div className="nes-container" style={{ width: '100%', maxWidth: '360px', padding: '0' }}>
       {/* Tab Header */}
       <div className="flex" style={{ borderBottom: '4px solid #000' }}>
         <button
@@ -33,7 +33,9 @@ const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace, onC
             borderRadius: '0', 
             borderBottom: 'none',
             borderRight: '4px solid #000',
-            margin: '0'
+            margin: '0',
+            fontSize: '8px',
+            padding: '8px 4px'
           }}
           onClick={() => setActiveTab('imageGen')}
         >
@@ -44,7 +46,9 @@ const TabFolder: React.FC<TabFolderProps> = ({ onImagePromptSubmit, onTrace, onC
           style={{ 
             borderRadius: '0', 
             borderBottom: 'none',
-            margin: '0'
+            margin: '0',
+            fontSize: '8px',
+            padding: '8px 4px'
           }}
           onClick={() => setActiveTab('learnDesign')}
         >

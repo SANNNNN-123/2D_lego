@@ -13,6 +13,16 @@ function BuilderContent() {
   const { setSelectedDesign } = useDesign();
 
   useEffect(() => {
+    // Add builder-page class to body for mobile-specific styling
+    document.body.classList.add('builder-page');
+    
+    // Clean up function to remove the class when component unmounts
+    return () => {
+      document.body.classList.remove('builder-page');
+    };
+  }, []);
+
+  useEffect(() => {
     // If there's a design ID in the URL, fetch the design and set it in context
     if (designId) {
       const loadDesign = async () => {
@@ -41,7 +51,7 @@ function BuilderContent() {
   }, [designId, setSelectedDesign]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white p-4">
+    <div className="min-h-screen flex flex-col bg-white p-4 builder-container">
       <main className="flex-1 flex items-center justify-center">
         <Board width={30} height={30} />
       </main>

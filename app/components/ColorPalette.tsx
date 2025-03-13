@@ -44,18 +44,18 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
   };
 
   return (
-    <div className="nes-container with-title custom-cursor" style={{ padding: '1rem' }}>
+    <div className="nes-container with-title custom-cursor" style={{ padding: '0.75rem', width: '100%', maxWidth: '360px' }}>
       <p className="title" style={{ fontFamily: 'var(--font-press-start-2p)', fontSize: '10px' }}>Colors</p>
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-6 gap-1 md:gap-2">
         {colors.map(color => renderLegoPiece(color))}
       </div>
       
-      <div className="flex items-center gap-2 mt-4">
+      <div className="flex items-center gap-2 mt-3">
         <div 
           className="relative cursor-pointer custom-cursor-click"
           style={{
-            width: '32px',
-            height: '32px',
+            width: '28px',
+            height: '28px',
             border: selectedColor !== null && selectedColor.startsWith('#') && !colors.includes(selectedColor) ? '2px solid black' : '1px solid #ccc',
             overflow: 'hidden',
             borderRadius: '50%',

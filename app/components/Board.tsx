@@ -88,76 +88,37 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   };
 
   const handleClick = (x: number, y: number) => {
+    // Don't process if it's the same position as last click during drag
+    if (lastPlacedPosition.current?.x === x && lastPlacedPosition.current?.y === y) {
+      return;
+    }
+
     if (selectedColor === null) {
       // Eraser mode - remove piece at clicked position
-      // Only erase non-transparent pieces first, if none found, then erase transparent ones
-      const hasNonTransparentPiece = pieces.some(piece => {
-        const [pieceX, pieceY] = piece.position;
-        const [pieceWidth, pieceHeight] = piece.size;
-        const isWithinBounds = x >= pieceX && 
-                              x < pieceX + pieceWidth && 
-                              y >= pieceY && 
-                              y < pieceY + pieceHeight;
-        
-        if (isWithinBounds) {
-          // Check if it's a non-transparent piece
-          return !isSemiTransparent(piece.color);
-        }
-        return false;
-      });
-      
-      if (hasNonTransparentPiece) {
-        // Erase only non-transparent pieces
-        erasePieceAt(x, y, false);
-      } else {
-        // If no non-transparent pieces, erase transparent ones
-        erasePieceAt(x, y, true);
-      }
+      erasePieceAt(x, y);
     } else {
       placePieceAt(x, y);
     }
   };
 
-  const erasePieceAt = (x: number, y: number, eraseTransparent = false) => {
-    // Don't erase if it's the same position as last erased piece during drag
-    if (lastPlacedPosition.current?.x === x && lastPlacedPosition.current?.y === y) {
-      return;
-    }
-
-    const isOccupied = pieces.some(piece => {
+  const erasePieceAt = (x: number, y: number) => {
+    // Find pieces at this position
+    const piecesToRemove = pieces.filter(piece => {
       const [pieceX, pieceY] = piece.position;
       const [pieceWidth, pieceHeight] = piece.size;
-      return x >= pieceX && 
-             x < pieceX + pieceWidth && 
-             y >= pieceY && 
-             y < pieceY + pieceHeight;
+      const isWithinBounds = x >= pieceX && 
+                            x < pieceX + pieceWidth && 
+                            y >= pieceY && 
+                            y < pieceY + pieceHeight;
+      
+      // Only remove non-transparent pieces
+      return isWithinBounds && !isSemiTransparent(piece.color);
     });
 
-    if (isOccupied) {
-      // Remove pieces at this position based on transparency
-      const newPieces = pieces.filter(piece => {
-        const [pieceX, pieceY] = piece.position;
-        const [pieceWidth, pieceHeight] = piece.size;
-        const isWithinBounds = x >= pieceX && 
-                              x < pieceX + pieceWidth && 
-                              y >= pieceY && 
-                              y < pieceY + pieceHeight;
-        
-        if (isWithinBounds) {
-          // Check if it's a transparent piece
-          const isTransparent = isSemiTransparent(piece.color);
-          
-          // Keep transparent pieces unless eraseTransparent is true
-          if (isTransparent) {
-            return !eraseTransparent;
-          }
-          // Remove non-transparent pieces
-          return eraseTransparent;
-        }
-        return true; // Keep pieces not at this position
-      });
-      
-      setPieces(newPieces);
+    // If there are pieces to remove, remove them
+    if (piecesToRemove.length > 0) {
+      const pieceIds = new Set(piecesToRemove.map(p => p.id));
+      setPieces(pieces.filter(p => !pieceIds.has(p.id)));
       lastPlacedPosition.current = { x, y };
     }
   };
@@ -168,15 +129,6 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
       return;
     }
 
-    // Add new 1x1 piece
-    const newPiece: LegoPiece = {
-      id: `piece-${Date.now()}`,
-      type: 'Plate',
-      size: [1, 1],
-      position: [x, y],
-      color: selectedColor as PieceColor,
-    };
-    
     // Check if position is already occupied by a non-transparent piece
     const isOccupiedByNonTransparent = pieces.some(piece => {
       const [pieceX, pieceY] = piece.position;
@@ -189,11 +141,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                             y < pieceY + pieceHeight;
       
       // If within bounds, check if the piece is semi-transparent (traced)
-      if (isWithinBounds) {
-        // If the piece is semi-transparent, consider it not occupied
-        return !isSemiTransparent(piece.color);
-      }
-      return false; // Not within bounds
+      return isWithinBounds && !isSemiTransparent(piece.color);
     });
 
     // If occupied by a non-transparent piece, don't place a new piece
@@ -201,6 +149,15 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
       return;
     }
 
+    // Add new 1x1 piece
+    const newPiece: LegoPiece = {
+      id: `piece-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: 'Plate',
+      size: [1, 1],
+      position: [x, y],
+      color: selectedColor as PieceColor,
+    };
+    
     // Remove any existing semi-transparent pieces at this position
     const filteredPieces = pieces.filter(piece => {
       const [pieceX, pieceY] = piece.position;
@@ -212,11 +169,8 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                             y >= pieceY && 
                             y < pieceY + pieceHeight;
       
-      if (isWithinBounds) {
-        // Always remove traced pieces at this position
-        return !isSemiTransparent(piece.color);
-      }
-      return true; // Keep all other pieces
+      // Keep all pieces except semi-transparent ones at this position
+      return !(isWithinBounds && isSemiTransparent(piece.color));
     });
 
     // Add the new piece
@@ -235,32 +189,19 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
   };
 
   const handleMouseMove = (x: number, y: number) => {
-    if (isDragging) {
-      if (selectedColor === null) {
-        // In eraser mode, prioritize erasing non-transparent pieces
-        const hasNonTransparentPiece = pieces.some(piece => {
-          const [pieceX, pieceY] = piece.position;
-          const [pieceWidth, pieceHeight] = piece.size;
-          const isWithinBounds = x >= pieceX && 
-                                x < pieceX + pieceWidth && 
-                                y >= pieceY && 
-                                y < pieceY + pieceHeight;
-          
-          if (isWithinBounds) {
-            // Check if it's a non-transparent piece
-            return !isSemiTransparent(piece.color);
-          }
-          return false;
-        });
-        
-        if (hasNonTransparentPiece) {
-          // Erase only non-transparent pieces
-          erasePieceAt(x, y, false);
-        }
-      } else {
-        // In color mode, place pieces in empty spots or on top of transparent pieces
-        placePieceAt(x, y);
-      }
+    if (!isDragging) return;
+    
+    // Don't process if it's the same position as last move
+    if (lastPlacedPosition.current?.x === x && lastPlacedPosition.current?.y === y) {
+      return;
+    }
+
+    if (selectedColor === null) {
+      // In eraser mode
+      erasePieceAt(x, y);
+    } else {
+      // In color mode, place pieces in empty spots or on top of transparent pieces
+      placePieceAt(x, y);
     }
   };
 
@@ -350,6 +291,108 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
     }, 100);
   };
 
+  // Calculate board size based on screen width for mobile responsiveness
+  const calculateBoardSize = () => {
+    // For mobile screens, make the board smaller
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      const scale = isMobile ? 0.7 : 1; // Scale down more on mobile for better fit
+      return {
+        width: `${width * 24 * scale}px`,
+        height: `${height * 24 * scale}px`,
+      };
+    }
+    return {
+      width: `${width * 24}px`,
+      height: `${height * 24}px`,
+    };
+  };
+
+  // Add touch event handlers for the board
+  useEffect(() => {
+    const boardElement = boardRef.current;
+    if (!boardElement) return;
+
+    // Debounce function to limit how often a function can be called
+    const debounce = (func: Function, delay: number) => {
+      let timeoutId: NodeJS.Timeout;
+      return (...args: any[]) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func(...args), delay);
+      };
+    };
+
+    // Throttle function to limit how often a function can be called
+    const throttle = (func: Function, limit: number) => {
+      let inThrottle: boolean;
+      return (...args: any[]) => {
+        if (!inThrottle) {
+          func(...args);
+          inThrottle = true;
+          setTimeout(() => (inThrottle = false), limit);
+        }
+      };
+    };
+
+    // Throttled version of handleMouseMove
+    const throttledHandleMouseMove = throttle((x: number, y: number) => {
+      handleMouseMove(x, y);
+    }, 50); // Limit to once every 50ms
+
+    // Handle touch start on the board
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault(); // Prevent default browser behavior
+      
+      const touch = e.touches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!element) return;
+      
+      handleMouseDown();
+      
+      // Get the cell coordinates from the data attribute
+      const cellMatch = element.getAttribute('data-cell')?.match(/cell-(\d+)-(\d+)/);
+      if (cellMatch) {
+        const x = parseInt(cellMatch[1]);
+        const y = parseInt(cellMatch[2]);
+        handleClick(x, y);
+      }
+    };
+
+    // Handle touch move on the board
+    const handleTouchMove = throttle((e: TouchEvent) => {
+      if (!isDragging) return;
+      
+      const touch = e.touches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!element) return;
+      
+      // Get the cell coordinates from the data attribute
+      const cellMatch = element.getAttribute('data-cell')?.match(/cell-(\d+)-(\d+)/);
+      if (cellMatch) {
+        const x = parseInt(cellMatch[1]);
+        const y = parseInt(cellMatch[2]);
+        throttledHandleMouseMove(x, y);
+      }
+    }, 16); // Throttle to roughly 60fps
+
+    // Handle touch end on the board
+    const handleTouchEnd = (e: TouchEvent) => {
+      handleMouseUp();
+    };
+
+    // Add event listeners with passive: false to allow preventDefault
+    boardElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+    boardElement.addEventListener('touchmove', handleTouchMove as any, { passive: false });
+    boardElement.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    // Clean up event listeners
+    return () => {
+      boardElement.removeEventListener('touchstart', handleTouchStart);
+      boardElement.removeEventListener('touchmove', handleTouchMove as any);
+      boardElement.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, selectedColor]);
+
   return (
     <div className="flex flex-col items-center w-full custom-cursor">
       <GameHeader 
@@ -402,23 +445,26 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
         </div>
       )}
 
-      <div className="flex gap-8 items-start justify-center mt-4">
-        {/* Tab Folder Component */}
-        <TabFolder 
-          onImagePromptSubmit={(prompt) => {
-            // console.log("Image prompt submitted:", prompt);
-          }} 
-          onTrace={handleTrace}
-          onColorSelect={setSelectedColor}
-        />
+      {/* Mobile-friendly layout with responsive design */}
+      <div className="flex flex-col md:flex-row md:gap-8 items-center md:items-start justify-center mt-4 w-full">
+        {/* Tab Folder Component - Top on mobile, Left on desktop */}
+        <div className="w-full md:w-auto mb-4 md:mb-0">
+          <TabFolder 
+            onImagePromptSubmit={(prompt) => {
+              // console.log("Image prompt submitted:", prompt);
+            }} 
+            onTrace={handleTrace}
+            onColorSelect={setSelectedColor}
+          />
+        </div>
 
+        {/* Board - Middle on both mobile and desktop */}
         <div
           ref={boardRef}
-          className="board relative bg-white rounded-lg shadow-xl"
+          className="board relative bg-white rounded-lg shadow-xl mb-6 md:mb-0"
           id="board-container"
           style={{
-            width: `${width * 24}px`,
-            height: `${height * 24}px`,
+            ...calculateBoardSize(),
             backgroundColor: '#f0f0f0',
             backgroundImage: `
               linear-gradient(to right, rgba(128,128,128,0.15) 1px, transparent 1px),
@@ -483,6 +529,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                   // In color mode, only call handleClick if the cell is not occupied
                   handleClick(x, y);
                 }}
+                data-cell={`cell-${x}-${y}`}
               />
             );
           })}
@@ -495,6 +542,7 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
             return (
               <div
                 key={piece.id}
+                data-piece-id={piece.id}
                 style={{
                   position: 'absolute',
                   width: `${piece.size[0] * 24}px`,
@@ -547,6 +595,19 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
                     // If dragging in eraser mode, erase this piece if it's not transparent
                     setPieces(pieces.filter(p => p.id !== piece.id));
                     lastPlacedPosition.current = { x: piece.position[0], y: piece.position[1] };
+                  }
+                }}
+                onTouchStart={(e) => {
+                  if (selectedColor === null) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMouseDown();
+                    
+                    const isTransparent = isSemiTransparent(piece.color);
+                    if (!isTransparent) {
+                      setPieces(pieces.filter(p => p.id !== piece.id));
+                      lastPlacedPosition.current = { x: piece.position[0], y: piece.position[1] };
+                    }
                   }
                 }}
               >
@@ -603,11 +664,13 @@ const Board: React.FC<BoardProps> = ({ width, height }) => {
           })}
         </div>
 
-        {/* Color Palette */}
-        <ColorPalette
-          selectedColor={selectedColor}
-          onColorSelect={setSelectedColor}
-        />
+        {/* Color Palette - Bottom on mobile, Right on desktop */}
+        <div className="w-full md:w-auto">
+          <ColorPalette
+            selectedColor={selectedColor}
+            onColorSelect={setSelectedColor}
+          />
+        </div>
       </div>
     </div>
   );

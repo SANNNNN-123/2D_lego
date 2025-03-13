@@ -210,3 +210,72 @@ button {
 .nes-btn, .nes-container {
   font-family: var(--font-press-start-2p);
 }
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Make the board container take full width on mobile */
+  .board {
+    max-width: 100%;
+    overflow: hidden;
+    touch-action: none; /* Disable browser handling of all panning and zooming gestures */
+    will-change: transform; /* Hint to browser to optimize for animations */
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+  
+  /* Adjust font sizes for mobile */
+  .nes-btn {
+    font-size: 8px !important;
+    padding: 6px !important;
+  }
+  
+  /* Ensure the color palette is properly sized */
+  .color-swatch {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  
+  /* Make touch targets larger for better mobile interaction */
+  [data-piece-id], [data-cell] {
+    min-width: 24px;
+    min-height: 24px;
+    will-change: transform; /* Hint to browser to optimize for animations */
+  }
+  
+  /* Make the game header more compact */
+  .game-header {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Ensure dialogs are properly centered and sized */
+  .nes-dialog-overlay .nes-container {
+    max-width: 280px !important;
+  }
+  
+  /* Allow scrolling on mobile but prevent unwanted touch behaviors */
+  body.builder-page {
+    /* Remove fixed positioning to allow scrolling */
+    position: relative;
+    overflow-y: auto;
+    width: 100%;
+    height: auto;
+    /* Prevent unwanted touch behaviors */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Add padding at the bottom to ensure the color palette is fully visible */
+  .builder-container {
+    padding-bottom: 30px;
+  }
+  
+  /* Adjust spacing for mobile layout */
+  .nes-container {
+    margin-bottom: 15px !important;
+  }
+  
+  /* Make the board container more compact */
+  #board-container {
+    margin-bottom: 15px !important;
+  }
+}

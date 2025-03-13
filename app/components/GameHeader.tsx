@@ -135,8 +135,8 @@ const GameHeader: React.FC<GameHeaderProps> = ({ onClear, onSubmit, captureDesig
   };
 
   return (
-    <div className="w-full mb-8 custom-cursor">
-      <div className="flex justify-between items-center mb-4 px-4">
+    <div className="w-full mb-6 custom-cursor">
+      <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
           {/* Hidden dummy button to absorb any automatic clicks */}
           <button 
